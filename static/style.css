@@ -160,14 +160,23 @@ body {
     transition: all 0.3s;
 }
 
-.stop-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.stop-btn {
+    display: none; /* Сначала скрыта */
+    background: #e94560;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 20px;
 }
 
-.stop-btn:hover:not(:disabled) {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(233, 69, 96, 0.7);
+/* Показываем только когда активно */
+.roulette-container.active .stop-btn {
+    display: block;
 }
 
 /* Нижнее меню */
