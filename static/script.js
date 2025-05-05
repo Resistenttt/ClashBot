@@ -1,43 +1,68 @@
-let balance = 5000;
+document.addEventListener('DOMContentLoaded', () => {
+    const cases = document.querySelectorAll('.case');
+    const modal = document.getElementById('result-modal');
+    const wonItem = document.getElementById('won-item');
+    const closeModal = document.getElementById('close-modal');
+    let balance = 5000;
 
-async function openCase(caseType) {
-    const resultElement = document.getElementById('result');
-    resultElement.innerHTML = '<div class="spinner">⌛</div>';
+    // Цены кейсов
+    const prices = {
+        rusty: 500,
+        tactical: 3000
+    };
 
-    try {
-        const response = await fetch(`/open_case/${caseType}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ user_id: 1 })
-        });
-        
-        const data = await response.json();
+    // Предметы в кейсах
+    const items = {
+        rusty: ["Glock-18 | Moonrise", "USP-S | Cortex", "P250 | Муравьиный улей"],
+        tactical: ["AWP | Красная линия", "AK-47 | Огненный змей", "★ Нож | Ультрафиолет"]
+    };
 
-        if (data.error) {
-            resultElement.textContent = `Ошибка: ${data.error}`;
+    // Обновление баланса
+    function updateBalance() {
+        document.getElementById('balance').textContent = balance;
+    }
+
+    // Открытие кейса
+    async function openCase(caseType) {
+        if (balance < prices[caseType]) {
+            alert('Недостаточно средств!');
             return;
         }
 
-        balance = data.balance;
-        document.getElementById('balance').textContent = balance;
+        try {
+            const response = await fetch(`/open_case/${caseType}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: 1 })
+            });
 
-        // Анимация
-        resultElement.innerHTML = `
-            <div class="item-reveal">
-                <h3>Вы получили:</h3>
-                <p>${data.item}</p>
-            </div>
-        `;
-        
-    } catch (error) {
-        resultElement.textContent = 'Ошибка соединения';
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                balance = result.balance;
+                updateBalance();
+                wonItem.textContent = result.item;
+                modal.classList.add('active');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
     }
-}
 
-// Инициализация Telegram WebApp
-if (window.Telegram?.WebApp) {
-    Telegram.WebApp.expand();
-    Telegram.WebApp.enableClosingConfirmation();
-}
+    // Назначение обработчиков
+    cases.forEach(caseElement => {
+        caseElement.addEventListener('click', () => {
+            const caseType = caseElement.getAttribute('data-type');
+            openCase(caseType);
+        });
+    });
+
+    closeModal.addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+
+    // Инициализация
+    updateBalance();
+});
