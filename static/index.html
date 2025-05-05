@@ -20,17 +20,36 @@
             
             <div class="cases-grid">
                 <div class="case" data-price="500" data-type="basic">
-                    <img src="/static/assets/Case1.png" alt="Basic Case">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2489/2489317.png" alt="Basic Case">
                     <h3>Обычный кейс</h3>
                     <p>500 монет</p>
                 </div>
                 
                 <div class="case" data-price="1500" data-type="rare">
-                    <img src="/static/assets/Case2.png" alt="Rare Case">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2489/2489336.png" alt="Rare Case">
                     <h3>Редкий кейс</h3>
                     <p>1500 монет</p>
                 </div>
             </div>
+            
+            <!-- Анимация открытия кейса -->
+            <div class="spin-reveal-container hidden">
+                <div class="spin-stage">
+                    <div class="spinning-case">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2489/2489317.png" alt="Spinning Case">
+                    </div>
+                    <div class="particles"></div>
+                </div>
+                <div class="reveal-stage hidden">
+                    <div class="prize-item">
+                        <img id="won-item-img" src="" alt="Prize">
+                        <h3 id="won-item-name"></h3>
+                        <button class="collect-btn">Забрать</button>
+                    </div>
+                    <div class="confetti"></div>
+                </div>
+            </div>
+        </div>
             
             <div class="roulette-container hidden">
                 <div class="roulette-slider" id="roulette"></div>
