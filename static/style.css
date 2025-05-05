@@ -1,13 +1,60 @@
 body {
+    font-family: 'Segoe UI', sans-serif;
     background: #1a1a2e;
     color: white;
-    font-family: Arial, sans-serif;
+    margin: 0;
     padding: 20px;
 }
-.case {
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.balance {
     background: #e94560;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 10px;
+    padding: 10px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.cases {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.case {
+    background: #16213e;
+    border-radius: 15px;
+    padding: 20px;
+    width: 150px;
+    text-align: center;
     cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.case:hover {
+    transform: scale(1.05);
+}
+
+.case-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 15px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.rusty { background-image: url('https://i.imgur.com/JR8qOWW.png'); }
+.tactical { background-image: url('https://i.imgur.com/Ns4mXy1.png'); }
+
+.result {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 18px;
+    min-height: 50px;
 }
