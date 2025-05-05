@@ -1,35 +1,64 @@
-// Переключение вкладок
-document.querySelectorAll('.tg-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        // Удаляем активный класс у всех
-        document.querySelectorAll('.tg-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tg-tab-content').forEach(c => c.classList.remove('active'));
-        
-        // Активируем текущую
-        tab.classList.add('active');
-        const tabId = tab.getAttribute('data-tab');
-        document.getElementById(`${tabId}-tab`).classList.add('active');
-    });
-});
+// Конфигурация анимации
+const CASE_OPEN_DURATION = 5000; // 5 секунд
+const SPIN_ANIMATION_CLASS = 'spinning';
 
-// Открытие кейса
 document.querySelectorAll('.tg-case').forEach(caseEl => {
-    caseEl.addEventListener('click', async () => {
-        const caseType = caseEl.getAttribute('data-case');
-        const response = await fetch(`/open_case/${caseType}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ user_id: 1 })
-        });
-        const result = await response.json();
-        alert(`Вы получили: ${result.item}`);
+    caseEl.addEventListener('click', async function() {
+        const caseType = this.getAttribute('data-case');
+        const caseImage = this.querySelector('img');
+        
+        // Блокируем кнопку на время анимации
+        caseEl.style.pointerEvents = 'none';
+        
+        // Запускаем анимацию вращения
+        caseImage.classList.add(SPIN_ANIMATION_CLASS);
+        
+        // Симулируем запрос к серверу
+        setTimeout(async () => {
+            try {
+                const response = await fetch(`/open_case/${caseType}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_id: 1 })
+                });
+                
+                const result = await response.json();
+                
+                // Останавливаем анимацию
+                caseImage.classList.remove(SPIN_ANIMATION_CLASS);
+                
+                // Показываем результат
+                showResult(result.item);
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                caseImage.classList.remove(SPIN_ANIMATION_CLASS);
+                alert('Ошибка соединения');
+            }
+            
+            // Разблокируем кнопку
+            caseEl.style.pointerEvents = 'auto';
+        }, CASE_OPEN_DURATION);
     });
 });
 
-// Инициализация Telegram WebApp
-if (window.Telegram?.WebApp) {
-    Telegram.WebApp.expand();
-    Telegram.WebApp.enableClosingConfirmation();
+function showResult(item) {
+    const modal = document.createElement('div');
+    modal.className = 'result-modal';
+    modal.innerHTML = `
+        <div class="result-content">
+            <h2>🎉 Вы получили:</h2>
+            <div class="item">${item}</div>
+            <button class="close-btn">OK</button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Закрытие по кнопке
+    modal.querySelector('.close-btn').addEventListener('click', () => {
+        modal.remove();
+    });
 }
