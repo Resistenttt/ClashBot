@@ -1,0 +1,13 @@
+body {
+    background: #1a1a2e;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+.case {
+    background: #e94560;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
