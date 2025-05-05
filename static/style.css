@@ -1,3 +1,154 @@
+/* Новые стили для анимации */
+.spin-reveal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.spin-reveal-container.active {
+    opacity: 1;
+}
+
+.spin-stage {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinning-case {
+    width: 150px;
+    height: 150px;
+    animation: spin 1.5s linear infinite, pulse 1.5s ease infinite;
+    position: relative;
+    z-index: 2;
+}
+
+.spinning-case img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
+}
+
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://cdn-icons-png.flaticon.com/512/2583/2583344.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: float 3s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+.reveal-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transform: scale(0.5);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.reveal-stage.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.prize-item {
+    text-align: center;
+    background: rgba(30, 30, 47, 0.8);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(76, 201, 240, 0.5);
+    z-index: 3;
+}
+
+.prize-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    animation: float 2s ease-in-out infinite;
+}
+
+.collect-btn {
+    background: linear-gradient(135deg, #4cc9f0, #4895ef);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s;
+}
+
+.collect-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(76, 201, 240, 0.7);
+}
+
+.confetti {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://cdn-icons-png.flaticon.com/512/5726/5726470.png');
+    background-size: contain;
+    background-repeat: repeat;
+    opacity: 0;
+    transition: opacity 0.5s;
+    z-index: 1;
+}
+
+.reveal-stage.active .confetti {
+    opacity: 0.6;
+    animation: confettiFall 5s linear infinite;
+}
+
+/* Анимации */
+@keyframes spin {
+    0% { transform: rotate(0) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes pulse {
+    0%, 100% { filter: drop-shadow(0 0 15px gold); }
+    50% { filter: drop-shadow(0 0 30px #e94560); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes confettiFall {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 1000px; }
+}
 * {
     margin: 0;
     padding: 0;
