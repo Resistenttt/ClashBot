@@ -14,6 +14,73 @@ const ITEMS = {
 let state = {
     balance: 5000,
     currentCase: null,
+    isSpinning: false
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Инициализация кейсов
+    document.querySelectorAll('.case').forEach(caseEl => {
+        caseEl.addEventListener('click', () => {
+            if (state.isSpinning) return;
+            
+            const caseType = caseEl.getAttribute('data-type');
+            const casePrice = parseInt(caseEl.getAttribute('data-price'));
+            
+            if (state.balance >= casePrice) {
+                openCase(caseType, casePrice);
+            } else {
+                alert('Недостаточно средств!');
+            }
+        });
+    });
+
+    // Кнопка "Забрать"
+    document.querySelector('.collect-btn').addEventListener('click', () => {
+        document.querySelector('.spin-reveal-container').classList.remove('active');
+        document.querySelector('.reveal-stage').classList.remove('active');
+        state.isSpinning = false;
+    });
+
+    // Инициализация Telegram WebApp
+    if (window.Telegram?.WebApp) {
+        Telegram.WebApp.expand();
+    }
+});
+
+function openCase(caseType, price) {
+    state.currentCase = caseType;
+    state.balance -= price;
+    updateBalance();
+    state.isSpinning = true;
+    
+    const container = document.querySelector('.spin-reveal-container');
+    container.classList.remove('hidden');
+    container.classList.add('active');
+    
+    // Запуск анимации вращения
+    setTimeout(() => {
+        revealPrize(caseType);
+    }, 3000); // 3 секунды вращения
+}
+
+function revealPrize(caseType) {
+    const wonItem = ITEMS[caseType][Math.floor(Math.random() * ITEMS[caseType].length)];
+    
+    document.getElementById('won-item-img').src = wonItem.image;
+    document.getElementById('won-item-name').textContent = wonItem.name;
+    
+    // Переход к фазе раскрытия
+    document.querySelector('.spin-stage').classList.add('hidden');
+    document.querySelector('.reveal-stage').classList.remove('hidden');
+    document.querySelector('.reveal-stage').classList.add('active');
+}
+
+function updateBalance() {
+    document.getElementById('balance').textContent = state.balance;
+}
+let state = {
+    balance: 5000,
+    currentCase: null,
     isSpinning: false,
     spinInterval: null,
     spinSpeed: 50
