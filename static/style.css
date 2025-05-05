@@ -9,11 +9,9 @@
 }
 
 body {
-    font-family: 'Rubik', sans-serif;
-    background: var(--tg-bg);
-    color: var(--tg-text);
-    margin: 0;
-    padding: 0;
+  background: url('/static/assets/bg.jpg'), 
+              linear-gradient(45deg, #1A1A2E, #16213E);
+  background-size: cover;
 }
 
 .tg-app {
