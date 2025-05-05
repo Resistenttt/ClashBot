@@ -1,3 +1,2 @@
-fastapi==0.68.0
-uvicorn==0.15.0
-asgiref==3.4.1
+fastapi==0.95.2
+uvicorn==0.22.0
