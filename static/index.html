@@ -5,38 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CatsClash</title>
     <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon" href="/static/assets/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
-            <img src="/static/assets/logo.png" alt="Logo" class="logo">
-            <div class="balance">
-                Баланс: <span id="balance">5000</span> монет
+    <div class="tg-app">
+        <!-- Шапка -->
+        <header class="tg-header">
+            <div class="tg-user">
+                <img src="/static/assets/icons/profile.png" alt="Profile" class="tg-avatar">
+                <span class="tg-username">Игрок #1</span>
+            </div>
+            <div class="tg-balance">
+                <img src="/static/assets/icons/coin.png" alt="Coins">
+                <span id="balance">5000</span>
             </div>
         </header>
 
-        <main class="cases-grid">
-            <div class="case" data-type="rusty">
-                <img src="/static/assets/rusty-case.png" alt="Rusty Case">
-                <h3>Rusty Case</h3>
-                <p>500 монет</p>
+        <!-- Меню -->
+        <nav class="tg-tabs">
+            <button class="tg-tab active" data-tab="cases">
+                <img src="/static/assets/icons/case.png" alt="Cases">
+                Кейсы
+            </button>
+            <button class="tg-tab" data-tab="shop">
+                <img src="/static/assets/icons/shop.png" alt="Shop">
+                Магазин
+            </button>
+            <button class="tg-tab" data-tab="profile">
+                <img src="/static/assets/icons/user.png" alt="Profile">
+                Профиль
+            </button>
+        </nav>
+
+        <!-- Контент -->
+        <main class="tg-content">
+            <!-- Вкладка "Кейсы" -->
+            <div class="tg-tab-content active" id="cases-tab">
+                <div class="tg-cases-grid">
+                    <div class="tg-case" data-case="rusty">
+                        <img src="/static/assets/cases/rusty.png" alt="Rusty Case">
+                        <h3>Rusty Case</h3>
+                        <p>500 монет</p>
+                    </div>
+                    <div class="tg-case" data-case="tactical">
+                        <img src="/static/assets/cases/tactical.png" alt="Tactical Case">
+                        <h3>Tactical Case</h3>
+                        <p>3000 монет</p>
+                    </div>
+                </div>
             </div>
-            
-            <div class="case" data-type="tactical">
-                <img src="/static/assets/tactical-case.png" alt="Tactical Case">
-                <h3>Tactical Case</h3>
-                <p>3000 монет</p>
+
+            <!-- Вкладка "Магазин" -->
+            <div class="tg-tab-content" id="shop-tab">
+                <div class="tg-shop-items">
+                    <div class="tg-shop-item">
+                        <h3>1000 монет</h3>
+                        <p>150 руб.</p>
+                        <button class="tg-buy-btn">Купить</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка "Профиль" -->
+            <div class="tg-tab-content" id="profile-tab">
+                <div class="tg-stats">
+                    <p>Уровень: <span>5</span></p>
+                    <p>Открыто кейсов: <span>12</span></p>
+                </div>
             </div>
         </main>
-
-        <div id="result-modal" class="modal hidden">
-            <div class="modal-content">
-                <h2>Вы получили:</h2>
-                <p id="won-item"></p>
-                <button id="close-modal">OK</button>
-            </div>
-        </div>
     </div>
 
     <script src="/static/script.js"></script>
