@@ -1,6 +1,22 @@
 // Конфигурация анимации
 const CASE_OPEN_DURATION = 5000; // 5 секунд
 const SPIN_ANIMATION_CLASS = 'spinning';
+// Проверяем мобильное устройство
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+// Оптимизация для мобилок
+if (isMobile) {
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    window.addEventListener('resize', () => {
+        document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    });
+}
+
+// Все изображения будут корректного размера
+document.querySelectorAll('img').forEach(img => {
+    img.loading = 'lazy'; // Ленивая загрузка
+    img.decode().catch(() => {});
+});
 
 document.querySelectorAll('.tg-case').forEach(caseEl => {
     caseEl.addEventListener('click', async function() {
