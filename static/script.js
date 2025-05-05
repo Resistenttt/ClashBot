@@ -1,68 +1,35 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const cases = document.querySelectorAll('.case');
-    const modal = document.getElementById('result-modal');
-    const wonItem = document.getElementById('won-item');
-    const closeModal = document.getElementById('close-modal');
-    let balance = 5000;
-
-    // Цены кейсов
-    const prices = {
-        rusty: 500,
-        tactical: 3000
-    };
-
-    // Предметы в кейсах
-    const items = {
-        rusty: ["Glock-18 | Moonrise", "USP-S | Cortex", "P250 | Муравьиный улей"],
-        tactical: ["AWP | Красная линия", "AK-47 | Огненный змей", "★ Нож | Ультрафиолет"]
-    };
-
-    // Обновление баланса
-    function updateBalance() {
-        document.getElementById('balance').textContent = balance;
-    }
-
-    // Открытие кейса
-    async function openCase(caseType) {
-        if (balance < prices[caseType]) {
-            alert('Недостаточно средств!');
-            return;
-        }
-
-        try {
-            const response = await fetch(`/open_case/${caseType}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ user_id: 1 })
-            });
-
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                balance = result.balance;
-                updateBalance();
-                wonItem.textContent = result.item;
-                modal.classList.add('active');
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-        }
-    }
-
-    // Назначение обработчиков
-    cases.forEach(caseElement => {
-        caseElement.addEventListener('click', () => {
-            const caseType = caseElement.getAttribute('data-type');
-            openCase(caseType);
-        });
+// Переключение вкладок
+document.querySelectorAll('.tg-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        // Удаляем активный класс у всех
+        document.querySelectorAll('.tg-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tg-tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Активируем текущую
+        tab.classList.add('active');
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(`${tabId}-tab`).classList.add('active');
     });
-
-    closeModal.addEventListener('click', () => {
-        modal.classList.remove('active');
-    });
-
-    // Инициализация
-    updateBalance();
 });
+
+// Открытие кейса
+document.querySelectorAll('.tg-case').forEach(caseEl => {
+    caseEl.addEventListener('click', async () => {
+        const caseType = caseEl.getAttribute('data-case');
+        const response = await fetch(`/open_case/${caseType}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: 1 })
+        });
+        const result = await response.json();
+        alert(`Вы получили: ${result.item}`);
+    });
+});
+
+// Инициализация Telegram WebApp
+if (window.Telegram?.WebApp) {
+    Telegram.WebApp.expand();
+    Telegram.WebApp.enableClosingConfirmation();
+}
