@@ -1,9 +1,5 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
-app = FastAPI()
-app.mount("/static", StaticFiles(directory="../static"), name="static")
-
-@app.get("/")
-def read_root():
-    return {"status": "OK"}
+# Укажите абсолютный путь
+static_path = Path(__file__).parent.parent / "static"
+app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
