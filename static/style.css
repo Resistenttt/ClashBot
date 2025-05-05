@@ -1,121 +1,129 @@
-/* Базовый сброс для мобилок */
+/* ====================== */
+/* Базовые стили */
+/* ====================== */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: 'Rubik', sans-serif;
-    background: #1a1a2e;
-    color: white;
-    /* Фикс для Safari */
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+  font-family: 'Rubik', sans-serif;
+  background: #1a1a2e;
+  color: white;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .mobile-container {
-    width: 100%;
-    max-width: 100vw;
-    height: 100vh;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
+  height: 100vh;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ====================== */
 /* Шапка */
+/* ====================== */
 .mobile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  margin-bottom: 20px;
 }
 
 .profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .profile-img {
-    width: 40px !important; /* Жестко фиксируем размер */
-    height: 40px !important;
-    border-radius: 50%;
-    object-fit: contain;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  object-fit: contain;
 }
 
 .balance {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(255,255,255,0.1);
-    padding: 8px 12px;
-    border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.1);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 14px;
 }
 
 .coin-icon {
-    width: 20px !important;
-    height: 20px !important;
-    object-fit: contain;
+  width: 20px !important;
+  height: 20px !important;
+  object-fit: contain;
 }
 
-/* Контейнер кейсов */
+/* ====================== */
+/* Кейсы */
+/* ====================== */
 .cases-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
-    padding-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 20px;
 }
 
-/* Карточка кейса */
 .case-card {
-    background: #16213e;
-    border-radius: 12px;
-    padding: 15px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s;
-    border: 1px solid #2a3a6e;
+  background: #16213e;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: 1px solid #2a3a6e;
+  position: relative;
+  overflow: hidden;
+}
+
+.case-card.disabled {
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .case-image {
-    width: 80px !important; /* Фиксируем размер */
-    height: 80px !important;
-    margin: 0 auto 10px;
-    object-fit: contain; /* Предотвращает растяжение */
-    display: block;
+  width: 80px !important;
+  height: 80px !important;
+  margin: 0 auto 10px;
+  object-fit: contain;
+  display: block;
+  transition: all 0.3s;
+  z-index: 2;
+  position: relative;
 }
 
 .case-title {
-    font-size: 16px;
-    margin-bottom: 5px;
+  font-size: 16px;
+  margin-bottom: 5px;
+  position: relative;
+  z-index: 2;
 }
 
 .case-price {
-    color: #4cc9f0;
-    font-size: 14px;
+  color: #4cc9f0;
+  font-size: 14px;
+  position: relative;
+  z-index: 2;
 }
 
-/* Адаптация под разные экраны */
-@media (min-width: 400px) {
-    .cases-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Фикс для очень маленьких экранов */
-@media (max-height: 600px) {
-    .case-image {
-        width: 60px !important;
-        height: 60px !important;
-    }
-    /* Анимации */
+/* ====================== */
+/* Анимации */
+/* ====================== */
 @keyframes spin {
   0% { transform: rotateY(0) scale(1); }
   50% { transform: rotateY(180deg) scale(1.1); }
@@ -138,7 +146,9 @@ body {
   color: #4cc9f0;
 }
 
-/* Модальное окно */
+/* ====================== */
+/* Модальные окна */
+/* ====================== */
 .result-modal {
   position: fixed;
   top: 0;
@@ -151,6 +161,14 @@ body {
   align-items: center;
   z-index: 1000;
   backdrop-filter: blur(5px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.result-modal.active {
+  opacity: 1;
+  pointer-events: all;
 }
 
 .result-content {
@@ -161,6 +179,12 @@ body {
   width: 85%;
   max-width: 300px;
   border: 1px solid #5288c1;
+  transform: scale(0.9);
+  transition: transform 0.3s;
+}
+
+.result-modal.active .result-content {
+  transform: scale(1);
 }
 
 .won-item {
@@ -170,7 +194,50 @@ body {
   color: #ffd700;
 }
 
-/* Ошибки */
+.close-btn {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+.close-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(233, 69, 96, 0.7);
+}
+
+/* ====================== */
+/* Адаптация */
+/* ====================== */
+@media (min-width: 400px) {
+  .cases-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-height: 600px) {
+  .case-image {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  
+  .mobile-header {
+    margin-bottom: 10px;
+  }
+  
+  .case-card {
+    padding: 10px;
+  }
+}
+
+/* ====================== */
+/* Уведомления */
+/* ====================== */
 .error-toast {
   position: fixed;
   bottom: 20px;
@@ -182,10 +249,11 @@ body {
   border-radius: 8px;
   z-index: 1001;
   animation: fadeIn 0.3s ease;
+  max-width: 90%;
+  text-align: center;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateX(-50%) translateY(20px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
 }
