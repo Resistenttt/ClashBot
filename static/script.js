@@ -1,24 +1,38 @@
+// Данные кейсов (ЗАМЕНИТЕ НА СВОИ КАРТИНКИ)
 const ITEMS = {
     basic: [
-        { name: "Glock-18 | Moonrise", image: "https://cdn-icons-png.flaticon.com/512/2489/2489317.png", rarity: "common" },
-        { name: "USP-S | Cortex", image: "https://cdn-icons-png.flaticon.com/512/2489/2489317.png", rarity: "common" },
-        { name: "P250 | Муравьиный улей", image: "https://cdn-icons-png.flaticon.com/512/2489/2489317.png", rarity: "rare" }
+        { name: "Пистолет", image: "/static/assets/or1.png", rarity: "common" },
+        { name: "Дробовик", image: "/static/assets/or2.png", rarity: "common" },
+        { name: "Винтовка", image: "/static/assets/or3.png", rarity: "rare" },
+        { name: "Снайперка", image: "/static/assets/or4.png", rarity: "rare" },
+        { name: "Меч", image: "/static/assets/or5.png", rarity: "epic" }
     ],
     rare: [
-        { name: "AWP | Красная линия", image: "https://cdn-icons-png.flaticon.com/512/2489/2489336.png", rarity: "rare" },
-        { name: "AK-47 | Огненный змей", image: "https://cdn-icons-png.flaticon.com/512/2489/2489336.png", rarity: "epic" },
-        { name: "★ Нож | Ультрафиолет", image: "https://cdn-icons-png.flaticon.com/512/2489/2489336.png", rarity: "legendary" }
+        { name: "Золотой пистолет", image: "/static/assets/or6.png", rarity: "rare" },
+        { name: "АК-47", image: "/static/assets/or7.png", rarity: "epic" },
+        { name: "AWP", image: "/static/assets/or8.png", rarity: "epic" },
+        { name: "Кристальный меч", image: "/static/assets/or9.png", rarity: "legendary" },
+        { name: "Мифический артефакт", image: "/static/assets/or10.png", rarity: "legendary" }
     ]
 };
 
 let state = {
     balance: 5000,
     currentCase: null,
-    isSpinning: false
+    isSpinning: false,
+    spinInterval: null
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Инициализация кейсов
+    // Навигация по вкладкам
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            switchTab(tabId);
+        });
+    });
+
+    // Открытие кейсов
     document.querySelectorAll('.case').forEach(caseEl => {
         caseEl.addEventListener('click', () => {
             if (state.isSpinning) return;
@@ -44,77 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Инициализация Telegram WebApp
     if (window.Telegram?.WebApp) {
         Telegram.WebApp.expand();
-    }
-});
-
-function openCase(caseType, price) {
-    state.currentCase = caseType;
-    state.balance -= price;
-    updateBalance();
-    state.isSpinning = true;
-    
-    const container = document.querySelector('.spin-reveal-container');
-    container.classList.remove('hidden');
-    container.classList.add('active');
-    
-    // Запуск анимации вращения
-    setTimeout(() => {
-        revealPrize(caseType);
-    }, 3000); // 3 секунды вращения
-}
-
-function revealPrize(caseType) {
-    const wonItem = ITEMS[caseType][Math.floor(Math.random() * ITEMS[caseType].length)];
-    
-    document.getElementById('won-item-img').src = wonItem.image;
-    document.getElementById('won-item-name').textContent = wonItem.name;
-    
-    // Переход к фазе раскрытия
-    document.querySelector('.spin-stage').classList.add('hidden');
-    document.querySelector('.reveal-stage').classList.remove('hidden');
-    document.querySelector('.reveal-stage').classList.add('active');
-}
-
-function updateBalance() {
-    document.getElementById('balance').textContent = state.balance;
-}
-let state = {
-    balance: 5000,
-    currentCase: null,
-    isSpinning: false,
-    spinInterval: null,
-    spinSpeed: 50
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tabId = btn.getAttribute('data-tab');
-            switchTab(tabId);
-        });
-    });
-
-    document.querySelectorAll('.case').forEach(caseEl => {
-        caseEl.addEventListener('click', () => {
-            if (state.isSpinning) return;
-            
-            const caseType = caseEl.getAttribute('data-type');
-            const casePrice = parseInt(caseEl.getAttribute('data-price'));
-            
-            if (state.balance >= casePrice) {
-                openCase(caseType, casePrice);
-            } else {
-                alert('Недостаточно средств!');
-            }
-        });
-    });
-
-    document.querySelector('.close-modal').addEventListener('click', () => {
-        document.getElementById('win-modal').classList.remove('active');
-    });
-
-    if (window.Telegram?.WebApp) {
-        Telegram.WebApp.expand();
         Telegram.WebApp.enableClosingConfirmation();
         
         const user = Telegram.WebApp.initDataUnsafe?.user;
@@ -131,59 +74,71 @@ function openCase(caseType, price) {
     state.currentCase = caseType;
     state.balance -= price;
     updateBalance();
-    
-    const rouletteContainer = document.querySelector('.roulette-container');
-    rouletteContainer.classList.remove('hidden');
     state.isSpinning = true;
     
-    const roulette = document.getElementById('roulette');
-    roulette.innerHTML = '';
-    roulette.style.transform = 'translateX(0)';
+    const container = document.querySelector('.spin-reveal-container');
+    container.classList.remove('hidden');
+    container.classList.add('active');
     
-    for (let i = 0; i < 30; i++) {
-        const randomItem = ITEMS[caseType][Math.floor(Math.random() * ITEMS[caseType].length)];
-        const itemEl = document.createElement('div');
-        itemEl.className = 'roulette-item';
-        itemEl.innerHTML = `
-            <img src="${randomItem.image}" alt="${randomItem.name}">
-            <h4>${randomItem.name}</h4>
-        `;
-        roulette.appendChild(itemEl);
+    // Заполняем рулетку предметами
+    const rouletteContainer = document.getElementById('roulette-items');
+    rouletteContainer.innerHTML = '';
+    
+    // Добавляем 20 копий предметов для плавной прокрутки
+    for (let i = 0; i < 20; i++) {
+        ITEMS[caseType].forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'roulette-item';
+            itemEl.innerHTML = `<img src="${item.image}" alt="${item.name}">`;
+            rouletteContainer.appendChild(itemEl);
+        });
     }
     
+    // Запуск анимации прокрутки
     startRoulette();
-}
-
-function startRoulette() {
-    const roulette = document.getElementById('roulette');
-    let position = 0;
     
-    state.spinInterval = setInterval(() => {
-        position -= 5;
-        roulette.style.transform = `translateX(${position}px)`;
-    }, state.spinSpeed);
-    
+    // Автоматическая остановка через 3 секунды
     setTimeout(() => {
         stopRoulette();
     }, 3000);
 }
 
-function stopRoulette() {
-    clearInterval(state.spinInterval);
-    state.isSpinning = false;
+function startRoulette() {
+    const roulette = document.getElementById('roulette-items');
+    let position = 0;
+    const speed = 5; // Скорость прокрутки
     
-    const wonItem = ITEMS[state.currentCase][Math.floor(Math.random() * ITEMS[state.currentCase].length)];
-    
-    setTimeout(() => {
-        document.querySelector('.roulette-container').classList.add('hidden');
-        showWinModal(wonItem);
-    }, 1000);
+    state.spinInterval = setInterval(() => {
+        position -= speed;
+        roulette.style.transform = `translateX(${position}px)`;
+        
+        // Если дошли до конца - перескакиваем в начало
+        if (position <= -roulette.scrollWidth / 2) {
+            position = 0;
+        }
+    }, 16); // ~60 FPS
 }
 
-function showWinModal(item) {
-    document.getElementById('won-item-img').src = item.image;
-    document.getElementById('won-item-name').textContent = item.name;
-    document.getElementById('win-modal').classList.add('active');
+function stopRoulette() {
+    clearInterval(state.spinInterval);
+    
+    // Выбираем случайный предмет
+    const items = ITEMS[state.currentCase];
+    const wonItem = items[Math.floor(Math.random() * items.length)];
+    
+    // Показываем выигрыш
+    document.getElementById('won-item-img').src = wonItem.image;
+    document.getElementById('won-item-name').textContent = wonItem.name;
+    
+    // Устанавливаем редкость
+    const rarityBadge = document.getElementById('rarity-badge');
+    rarityBadge.textContent = wonItem.rarity.toUpperCase();
+    rarityBadge.className = `rarity-badge ${wonItem.rarity}`;
+    
+    // Переход к фазе раскрытия
+    document.querySelector('.spin-stage').classList.add('hidden');
+    document.querySelector('.reveal-stage').classList.remove('hidden');
+    document.querySelector('.reveal-stage').classList.add('active');
 }
 
 function updateBalance() {
