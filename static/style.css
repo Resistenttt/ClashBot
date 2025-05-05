@@ -1,97 +1,30 @@
-/* Базовые стили */
+/* Фон */
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #1a1a2e;
-    color: white;
-    margin: 0;
-    padding: 20px;
+  background: url('/static/assets/background.jpg') no-repeat center center fixed;
+  background-size: cover;
 }
 
-.app-container {
-    max-width: 414px; /* iPhone 16 Pro */
-    margin: 0 auto;
+/* Кнопки из Figma */
+.btn {
+  background: url('/static/assets/buttons/btn-normal.png') no-repeat;
+  width: 200px; /* Укажите точные размеры */
+  height: 60px;
+  border: none;
+  cursor: pointer;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+.btn:hover {
+  background: url('/static/assets/buttons/btn-hover.png') no-repeat;
 }
 
-.logo {
-    height: 40px;
+.btn:active {
+  background: url('/static/assets/buttons/btn-pressed.png') no-repeat;
+  transform: translateY(2px);
 }
 
-.balance {
-    background: #e94560;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: bold;
-}
-
-/* Сетка кейсов */
-.cases-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-}
-
-.case {
-    background: #16213e;
-    border-radius: 12px;
-    padding: 15px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.3s;
-}
-
-.case:hover {
-    transform: scale(1.03);
-}
-
-.case img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-}
-
-/* Модальное окно */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-}
-
-.modal.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.modal-content {
-    background: #16213e;
-    padding: 25px;
-    border-radius: 15px;
-    text-align: center;
-    width: 80%;
-    max-width: 300px;
-}
-
-#close-modal {
-    background: #e94560;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    margin-top: 15px;
-    cursor: pointer;
+/* Кейсы */
+.case-rusty {
+  background: url('/static/assets/cases/case-rusty.png') no-repeat;
+  width: 150px; /* Подставьте реальные размеры */
+  height: 150px;
 }
