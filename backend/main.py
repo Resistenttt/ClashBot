@@ -1,21 +1,19 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse
 from pathlib import Path
 import random
-import os
+import uvicorn
 
 app = FastAPI()
 
-# Настройка путей
-BASE_DIR = Path(__file__).parent.parent
-static_dir = BASE_DIR / "static"
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
+# Монтирование статики
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # База данных (временная)
 users_db = {1: {"balance": 5000}}
 
-# Кейсы
+# Логика кейсов
 cases = {
     "rusty": {
         "price": 500,
@@ -28,21 +26,17 @@ cases = {
 }
 
 @app.post("/open_case/{case_type}")
-async def open_case(case_type: str, request: Request):
-    data = await request.json()
-    user_id = data.get("user_id", 1)
-    
+async def open_case(case_type: str, user_id: int = 1):
     if case_type not in cases:
         raise HTTPException(status_code=404, detail="Кейс не найден")
     
-    user = users_db.get(user_id, {"balance": 0})
-    case = cases[case_type]
+    user = users_db.get(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
     
+    case = cases[case_type]
     if user["balance"] < case["price"]:
-        return JSONResponse(
-            {"error": "Недостаточно средств"}, 
-            status_code=400
-        )
+        raise HTTPException(status_code=400, detail="Недостаточно средств")
     
     user["balance"] -= case["price"]
     item = random.choice(case["items"])
@@ -54,9 +48,12 @@ async def open_case(case_type: str, request: Request):
     }
 
 @app.get("/")
-async def root():
-    return FileResponse(static_dir / "index.html")
+async def serve_index():
+    return FileResponse("static/index.html")
 
 @app.get("/favicon.ico")
 async def favicon():
-    return FileResponse(static_dir / "favicon.ico")
+    return FileResponse("static/assets/logo.png")
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
