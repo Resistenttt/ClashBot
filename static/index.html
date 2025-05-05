@@ -1,32 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CatsClash</title>
     <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon" href="/static/favicon.ico">
+    <link rel="icon" href="/static/assets/logo.png">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>CatsClash</h1>
-            <div class="balance">Баланс: <span id="balance">5000</span> монет</div>
+    <div class="app-container">
+        <header class="header">
+            <img src="/static/assets/logo.png" alt="Logo" class="logo">
+            <div class="balance">
+                Баланс: <span id="balance">5000</span> монет
+            </div>
         </header>
-        <div class="cases">
-            <div class="case" onclick="openCase('rusty')">
-                <div class="case-image rusty"></div>
+
+        <main class="cases-grid">
+            <div class="case" data-type="rusty">
+                <img src="/static/assets/rusty-case.png" alt="Rusty Case">
                 <h3>Rusty Case</h3>
                 <p>500 монет</p>
             </div>
-            <div class="case" onclick="openCase('tactical')">
-                <div class="case-image tactical"></div>
+            
+            <div class="case" data-type="tactical">
+                <img src="/static/assets/tactical-case.png" alt="Tactical Case">
                 <h3>Tactical Case</h3>
                 <p>3000 монет</p>
             </div>
+        </main>
+
+        <div id="result-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Вы получили:</h2>
+                <p id="won-item"></p>
+                <button id="close-modal">OK</button>
+            </div>
         </div>
-        <div id="result"></div>
     </div>
+
     <script src="/static/script.js"></script>
 </body>
 </html>
