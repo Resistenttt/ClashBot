@@ -18,8 +18,7 @@ let state = {
     currentCase: null,
     isSpinning: false,
     spinInterval: null,
-    spinSpeed: 50,
-    wonItem: null
+    spinSpeed: 50
 };
 
 // Инициализация
@@ -48,9 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Кнопка STOP в рулетке
-    document.querySelector('.stop-btn').addEventListener('click', stopRoulette);
-
     // Закрытие модального окна
     document.querySelector('.close-modal').addEventListener('click', () => {
         document.getElementById('win-modal').classList.remove('active');
@@ -60,34 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.Telegram?.WebApp) {
         Telegram.WebApp.expand();
         Telegram.WebApp.enableClosingConfirmation();
-        
-        const user = Telegram.WebApp.initDataUnsafe?.user;
-        if (user) {
-            document.querySelector('.profile-header h2').textContent = user.first_name || 'Игрок';
-            if (user.photo_url) {
-                document.querySelector('.profile-header .avatar').src = user.photo_url;
-            }
-        }
     }
 });
-
-// Переключение вкладок
-function switchTab(tabId) {
-    // Скрыть все вкладки
-    document.querySelectorAll('.content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // Показать выбранную
-    document.getElementById(tabId).classList.add('active');
-    
-    // Обновить активную кнопку
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    document.querySelector(`.nav-btn[data-tab="${tabId}"]`).classList.add('active');
-}
 
 // Открытие кейса
 function openCase(caseType, price) {
@@ -97,15 +67,16 @@ function openCase(caseType, price) {
     
     // Показать рулетку
     document.querySelector('.roulette-container').classList.remove('hidden');
+    state.isSpinning = true;
     
-    // Заполнить рулетку предметами
+    // Заполнить рулетку
     const roulette = document.getElementById('roulette');
     roulette.innerHTML = '';
+    roulette.style.transform = 'translateX(0)';
     
-    // Добавляем больше предметов для эффекта прокрутки
+    // Добавляем предметы
     for (let i = 0; i < 30; i++) {
         const randomItem = ITEMS[caseType][Math.floor(Math.random() * ITEMS[caseType].length)];
-        
         const itemEl = document.createElement('div');
         itemEl.className = 'roulette-item';
         itemEl.innerHTML = `
@@ -121,7 +92,6 @@ function openCase(caseType, price) {
 
 // Запуск рулетки
 function startRoulette() {
-    state.isSpinning = true;
     const roulette = document.getElementById('roulette');
     let position = 0;
     
@@ -130,26 +100,22 @@ function startRoulette() {
         roulette.style.transform = `translateX(${position}px)`;
     }, state.spinSpeed);
     
-    // Через 3 секунды разрешаем остановку
+    // Автоматическая остановка через 3 секунды
     setTimeout(() => {
-        document.querySelector('.stop-btn').disabled = false;
+        stopRoulette();
     }, 3000);
 }
 
 // Остановка рулетки
 function stopRoulette() {
-    if (!state.isSpinning) return;
-    
     clearInterval(state.spinInterval);
-    document.querySelector('.stop-btn').disabled = true;
+    state.isSpinning = false;
     
-    // Выбираем случайный предмет как выигрыш
+    // Выбираем случайный предмет
     const wonItem = ITEMS[state.currentCase][Math.floor(Math.random() * ITEMS[state.currentCase].length)];
-    state.wonItem = wonItem;
     
     // Плавная остановка
     setTimeout(() => {
-        state.isSpinning = false;
         document.querySelector('.roulette-container').classList.add('hidden');
         showWinModal(wonItem);
     }, 1000);
@@ -165,4 +131,17 @@ function showWinModal(item) {
 // Обновление баланса
 function updateBalance() {
     document.getElementById('balance').textContent = state.balance;
+}
+
+// Переключение вкладок
+function switchTab(tabId) {
+    document.querySelectorAll('.content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(tabId).classList.add('active');
+    
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`.nav-btn[data-tab="${tabId}"]`).classList.add('active');
 }
