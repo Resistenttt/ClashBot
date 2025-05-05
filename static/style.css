@@ -1,30 +1,134 @@
-/* Фон */
+/* Базовые стили Telegram-like */
+:root {
+    --tg-bg: #17212b;
+    --tg-primary: #2b5278;
+    --tg-secondary: #232e3c;
+    --tg-text: #ffffff;
+    --tg-accent: #5288c1;
+    --tg-green: #5eb95e;
+}
+
 body {
-  background: url('/static/assets/background.jpg') no-repeat center center fixed;
-  background-size: cover;
+    font-family: 'Rubik', sans-serif;
+    background: var(--tg-bg);
+    color: var(--tg-text);
+    margin: 0;
+    padding: 0;
 }
 
-/* Кнопки из Figma */
-.btn {
-  background: url('/static/assets/buttons/btn-normal.png') no-repeat;
-  width: 200px; /* Укажите точные размеры */
-  height: 60px;
-  border: none;
-  cursor: pointer;
+.tg-app {
+    max-width: 100%;
+    min-height: 100vh;
+    padding: 15px;
 }
 
-.btn:hover {
-  background: url('/static/assets/buttons/btn-hover.png') no-repeat;
+/* Шапка */
+.tg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.btn:active {
-  background: url('/static/assets/buttons/btn-pressed.png') no-repeat;
-  transform: translateY(2px);
+.tg-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tg-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.tg-balance {
+    background: var(--tg-secondary);
+    padding: 8px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Меню */
+.tg-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.tg-tab {
+    background: var(--tg-secondary);
+    border: none;
+    color: var(--tg-text);
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+}
+
+.tg-tab.active {
+    background: var(--tg-primary);
+}
+
+.tg-tab img {
+    width: 24px;
+    height: 24px;
+}
+
+/* Контент */
+.tg-tab-content {
+    display: none;
+}
+
+.tg-tab-content.active {
+    display: block;
 }
 
 /* Кейсы */
-.case-rusty {
-  background: url('/static/assets/cases/case-rusty.png') no-repeat;
-  width: 150px; /* Подставьте реальные размеры */
-  height: 150px;
+.tg-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.tg-case {
+    background: var(--tg-secondary);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.tg-case:hover {
+    transform: scale(1.03);
+}
+
+.tg-case img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+/* Магазин */
+.tg-shop-items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.tg-buy-btn {
+    background: var(--tg-green);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
 }
