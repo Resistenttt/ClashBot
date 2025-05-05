@@ -1,250 +1,168 @@
-/**
- * CatsClash - Game Logic
- * Полная версия с:
- * - Определением мобильных устройств
- * - Анимацией открытия кейсов
- * - Интеграцией Telegram WebApp
- * - Обработкой ошибок
- */
+// Данные предметов для кейсов
+const ITEMS = {
+    basic: [
+        { name: "Glock-18 | Moonrise", image: "https://cdn-icons-png.flaticon.com/512/2489/2489317.png", rarity: "common" },
+        { name: "USP-S | Cortex", image: "https://cdn-icons-png.flaticon.com/512/2489/2489317.png", rarity: "common" },
+        { name: "P250 | Муравьиный улей", image: "https://cdn-icons-png.flaticon.com/512/2489/2489317.png", rarity: "rare" }
+    ],
+    rare: [
+        { name: "AWP | Красная линия", image: "https://cdn-icons-png.flaticon.com/512/2489/2489336.png", rarity: "rare" },
+        { name: "AK-47 | Огненный змей", image: "https://cdn-icons-png.flaticon.com/512/2489/2489336.png", rarity: "epic" },
+        { name: "★ Нож | Ультрафиолет", image: "https://cdn-icons-png.flaticon.com/512/2489/2489336.png", rarity: "legendary" }
+    ]
+};
 
-// Конфигурация
-const CONFIG = {
-  CASE_OPEN_DURATION: 5000, // 5 секунд анимации
-  SPIN_ANIMATION_CLASS: 'case-spin',
-  BALANCE_CHANGE_ANIMATION_CLASS: 'balance-pulse'
+// Состояние игры
+let state = {
+    balance: 5000,
+    currentCase: null,
+    isSpinning: false,
+    spinInterval: null,
+    spinSpeed: 50,
+    wonItem: null
 };
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-  // Проверка платформы
-  const isMobile = checkMobileDevice();
-  initTelegramWebApp();
-  setupCases();
-  setupEventListeners();
-  
-  if (isMobile) {
-    optimizeForMobile();
-  }
+    // Навигация по вкладкам
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            switchTab(tabId);
+        });
+    });
+
+    // Открытие кейсов
+    document.querySelectorAll('.case').forEach(caseEl => {
+        caseEl.addEventListener('click', () => {
+            if (state.isSpinning) return;
+            
+            const caseType = caseEl.getAttribute('data-type');
+            const casePrice = parseInt(caseEl.getAttribute('data-price'));
+            
+            if (state.balance >= casePrice) {
+                openCase(caseType, casePrice);
+            } else {
+                alert('Недостаточно средств!');
+            }
+        });
+    });
+
+    // Кнопка STOP в рулетке
+    document.querySelector('.stop-btn').addEventListener('click', stopRoulette);
+
+    // Закрытие модального окна
+    document.querySelector('.close-modal').addEventListener('click', () => {
+        document.getElementById('win-modal').classList.remove('active');
+    });
+
+    // Инициализация Telegram WebApp
+    if (window.Telegram?.WebApp) {
+        Telegram.WebApp.expand();
+        Telegram.WebApp.enableClosingConfirmation();
+        
+        const user = Telegram.WebApp.initDataUnsafe?.user;
+        if (user) {
+            document.querySelector('.profile-header h2').textContent = user.first_name || 'Игрок';
+            if (user.photo_url) {
+                document.querySelector('.profile-header .avatar').src = user.photo_url;
+            }
+        }
+    }
 });
 
-// ======================
-// Основные функции
-// ======================
-
-/**
- * Проверяет мобильное устройство
- */
-function checkMobileDevice() {
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  console.log(`Mobile device: ${isMobile}`);
-  return isMobile;
-}
-
-/**
- * Оптимизация для мобильных устройств
- */
-function optimizeForMobile() {
-  // Фикс для 100vh на мобилках
-  document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-  window.addEventListener('resize', () => {
-    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-  });
-
-  // Отключаем масштабирование
-  document.addEventListener('touchmove', (e) => {
-    if (e.scale !== 1) e.preventDefault();
-  }, { passive: false });
-
-  // Ленивая загрузка изображений
-  document.querySelectorAll('img').forEach(img => {
-    img.loading = 'lazy';
-  });
-}
-
-/**
- * Инициализация Telegram WebApp
- */
-function initTelegramWebApp() {
-  if (window.Telegram?.WebApp) {
-    console.log('Telegram WebApp detected');
-    Telegram.WebApp.expand();
-    Telegram.WebApp.enableClosingConfirmation();
-    
-    // Используем данные пользователя из Telegram
-    const user = Telegram.WebApp.initDataUnsafe?.user;
-    if (user) {
-      updateUserProfile(user);
-    }
-  }
-}
-
-/**
- * Обновление профиля пользователя
- */
-function updateUserProfile(user) {
-  const usernameElement = document.querySelector('.username');
-  const avatarElement = document.querySelector('.profile-img');
-  
-  if (usernameElement) {
-    usernameElement.textContent = user.first_name || 'Player';
-  }
-  
-  if (avatarElement && user.photo_url) {
-    avatarElement.src = user.photo_url;
-  }
-}
-
-// ======================
-// Логика кейсов
-// ======================
-
-/**
- * Настройка кейсов
- */
-function setupCases() {
-  const cases = document.querySelectorAll('.case-card');
-  
-  cases.forEach(caseElement => {
-    caseElement.addEventListener('click', () => {
-      if (caseElement.classList.contains('disabled')) return;
-      
-      const caseType = caseElement.getAttribute('data-case');
-      openCase(caseElement, caseType);
+// Переключение вкладок
+function switchTab(tabId) {
+    // Скрыть все вкладки
+    document.querySelectorAll('.content').forEach(tab => {
+        tab.classList.remove('active');
     });
-  });
+    
+    // Показать выбранную
+    document.getElementById(tabId).classList.add('active');
+    
+    // Обновить активную кнопку
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    document.querySelector(`.nav-btn[data-tab="${tabId}"]`).classList.add('active');
 }
 
-/**
- * Анимация открытия кейса
- */
-async function openCase(caseElement, caseType) {
-  try {
-    // Блокируем кнопку
-    caseElement.classList.add('disabled');
+// Открытие кейса
+function openCase(caseType, price) {
+    state.currentCase = caseType;
+    state.balance -= price;
+    updateBalance();
     
-    // Запускаем анимацию
-    const caseImage = caseElement.querySelector('.case-image');
-    caseImage.classList.add(CONFIG.SPIN_ANIMATION_CLASS);
+    // Показать рулетку
+    document.querySelector('.roulette-container').classList.remove('hidden');
     
-    // Симулируем задержку сервера
-    const result = await simulateCaseOpening(caseType);
+    // Заполнить рулетку предметами
+    const roulette = document.getElementById('roulette');
+    roulette.innerHTML = '';
     
-    // Останавливаем анимацию
-    caseImage.classList.remove(CONFIG.SPIN_ANIMATION_CLASS);
+    // Добавляем больше предметов для эффекта прокрутки
+    for (let i = 0; i < 30; i++) {
+        const randomItem = ITEMS[caseType][Math.floor(Math.random() * ITEMS[caseType].length)];
+        
+        const itemEl = document.createElement('div');
+        itemEl.className = 'roulette-item';
+        itemEl.innerHTML = `
+            <img src="${randomItem.image}" alt="${randomItem.name}">
+            <h4>${randomItem.name}</h4>
+        `;
+        roulette.appendChild(itemEl);
+    }
     
-    // Показываем результат
-    showResultModal(result.item);
-    
-    // Обновляем баланс
-    updateBalance(result.balance);
-    
-  } catch (error) {
-    console.error('Case opening error:', error);
-    showError('Ошибка при открытии кейса');
-  } finally {
-    // Разблокируем кнопку
-    caseElement.classList.remove('disabled');
-  }
+    // Начать анимацию
+    startRoulette();
 }
 
-/**
- * Симуляция открытия кейса (замените на реальный API)
- */
-async function simulateCaseOpening(caseType) {
-  return new Promise((resolve) => {
+// Запуск рулетки
+function startRoulette() {
+    state.isSpinning = true;
+    const roulette = document.getElementById('roulette');
+    let position = 0;
+    
+    state.spinInterval = setInterval(() => {
+        position -= 5;
+        roulette.style.transform = `translateX(${position}px)`;
+    }, state.spinSpeed);
+    
+    // Через 3 секунды разрешаем остановку
     setTimeout(() => {
-      const items = {
-        rusty: ["Glock-18 | Moonrise", "USP-S | Cortex", "P250 | Муравьиный улей"],
-        tactical: ["AWP | Красная линия", "AK-47 | Огненный змей", "★ Нож | Ультрафиолет"]
-      };
-      
-      const prices = {
-        rusty: 500,
-        tactical: 3000
-      };
-      
-      // Текущий баланс
-      const currentBalance = parseInt(document.getElementById('balance').textContent) || 5000;
-      const newBalance = currentBalance - prices[caseType];
-      
-      resolve({
-        item: getRandomItem(items[caseType]),
-        balance: newBalance,
-        case_type: caseType
-      });
-    }, CONFIG.CASE_OPEN_DURATION);
-  });
+        document.querySelector('.stop-btn').disabled = false;
+    }, 3000);
 }
 
-/**
- * Показ модального окна с результатом
- */
-function showResultModal(item) {
-  const modal = document.createElement('div');
-  modal.className = 'result-modal';
-  modal.innerHTML = `
-    <div class="result-content">
-      <h2>🎉 Вы получили:</h2>
-      <div class="won-item">${item}</div>
-      <button class="tg-button close-btn">OK</button>
-    </div>
-  `;
-  
-  document.body.appendChild(modal);
-  
-  // Закрытие по кнопке
-  modal.querySelector('.close-btn').addEventListener('click', () => {
-    modal.remove();
-  });
+// Остановка рулетки
+function stopRoulette() {
+    if (!state.isSpinning) return;
+    
+    clearInterval(state.spinInterval);
+    document.querySelector('.stop-btn').disabled = true;
+    
+    // Выбираем случайный предмет как выигрыш
+    const wonItem = ITEMS[state.currentCase][Math.floor(Math.random() * ITEMS[state.currentCase].length)];
+    state.wonItem = wonItem;
+    
+    // Плавная остановка
+    setTimeout(() => {
+        state.isSpinning = false;
+        document.querySelector('.roulette-container').classList.add('hidden');
+        showWinModal(wonItem);
+    }, 1000);
 }
 
-/**
- * Обновление баланса с анимацией
- */
-function updateBalance(newBalance) {
-  const balanceElement = document.getElementById('balance');
-  if (!balanceElement) return;
-  
-  // Анимация изменения
-  balanceElement.classList.add(CONFIG.BALANCE_CHANGE_ANIMATION_CLASS);
-  balanceElement.textContent = newBalance;
-  
-  // Удаляем класс анимации после завершения
-  setTimeout(() => {
-    balanceElement.classList.remove(CONFIG.BALANCE_CHANGE_ANIMATION_CLASS);
-  }, 1000);
+// Показать модальное окно выигрыша
+function showWinModal(item) {
+    document.getElementById('won-item-img').src = item.image;
+    document.getElementById('won-item-name').textContent = item.name;
+    document.getElementById('win-modal').classList.add('active');
 }
 
-// ======================
-// Вспомогательные функции
-// ======================
-
-/**
- * Случайный предмет из массива
- */
-function getRandomItem(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-/**
- * Показ ошибки
- */
-function showError(message) {
-  const errorToast = document.createElement('div');
-  errorToast.className = 'error-toast';
-  errorToast.textContent = message;
-  document.body.appendChild(errorToast);
-  
-  setTimeout(() => {
-    errorToast.remove();
-  }, 3000);
-}
-
-/**
- * Настройка обработчиков событий
- */
-function setupEventListeners() {
-  // Дополнительные обработчики можно добавить здесь
-  window.addEventListener('online', () => showError('Соединение восстановлено'));
-  window.addEventListener('offline', () => showError('Нет интернет-соединения'));
+// Обновление баланса
+function updateBalance() {
+    document.getElementById('balance').textContent = state.balance;
 }
