@@ -1,4 +1,5 @@
-from aiogram import Bot, Dispatcher, types, executor
+from aiogram import Bot, Dispatcher, types
+from aiogram.utils import executor
 
 API_TOKEN = "7692515430:AAGyPtaAOhHl5hcIYQOMmHqWoYJiVVee0Zc"
 WEBAPP_URL = "https://clashbot-5j34.onrender.com"  # Ссылка на твой FastAPI сайт
