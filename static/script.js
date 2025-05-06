@@ -116,6 +116,8 @@ async function openCaseSpin(caseKey, items) {
     });
     const data = await res.json();
     spinItems.push(data.item);
+
+    // Показываем спин
     document.body.insertAdjacentHTML('beforeend', `
         <div class="case-preview-modal" id="spin-modal">
             <div class="case-preview-content">
@@ -134,16 +136,21 @@ async function openCaseSpin(caseKey, items) {
             </div>
         </div>
     `);
+
+    // Плавная прокрутка
+    const list = document.getElementById('spin-list');
+    const spinHeight = 180 * (spinItems.length - 1);
     setTimeout(() => {
-        const list = document.getElementById('spin-list');
-        list.style.transform = `translateY(-${spinItems.length-1}00%)`;
+        list.style.transition = "transform 2.2s cubic-bezier(0.22, 1.0, 0.36, 1)";
+        list.style.transform = `translateY(-${spinHeight}px)`;
         setTimeout(() => {
             document.getElementById('spin-close-btn').style.display = '';
             setBalance(balance - CASES.find(c=>c.key===caseKey).price);
             inventory.push(spinItems[spinItems.length-1]);
             setInventory(inventory);
-        }, 2200);
+        }, 2300);
     }, 80);
+
     document.getElementById('spin-close-btn').onclick = () => {
         document.getElementById('spin-modal').remove();
         renderApp("inventory");
