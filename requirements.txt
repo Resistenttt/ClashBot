@@ -1,7 +1,5 @@
 fastapi
 uvicorn
-python-telegram-bot
-aiohttp
 jinja2
 python-multipart
-aiogram
+aiogram==3.20.0.post0
