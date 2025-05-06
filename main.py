@@ -22,38 +22,23 @@ CASES = [
             {"name": "Five-SeveN", "desc": "Anodized Gunmetal (Factory New)", "img": "/static/or3.png"},
             {"name": "AWP", "desc": "Atheris (Field-Tested)", "img": "/static/or4.png"},
             {"name": "AK-47", "desc": "Redline (Minimal Wear)", "img": "/static/or5.png"},
-            {"name": "Desert Eagle", "desc": "Code Red (Factory New)", "img": "https://community.akamai.steamstatic.com/economy/image/1k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k/360fx360f"},
-            {"name": "AWP", "desc": "Dragon Lore (Factory New)", "img": "https://community.akamai.steamstatic.com/economy/image/0k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k/360fx360f"},
+            {"name": "Desert Eagle", "desc": "Code Red (Factory New)", "img": "/static/or6.png"},
+            {"name": "AWP", "desc": "Dragon Lore (Factory New)", "img": "/static/or7.png"},
         ]
     },
     {
         "key": "tactical",
         "title": "Tactical Case",
         "price": 3000,
-        "img": "/static/Case2.pngg",
+        "img": "/static/Case1.png",
         "items": [
-            {"name": "M4A1-S", "desc": "Guardian (Minimal Wear)", "img": "/assets/or6.png"},
-            {"name": "USP-S", "desc": "Orion (Factory New)", "img": "/assets/or7.png"},
-            {"name": "FAMAS", "desc": "Commemoration (Minimal Wear)", "img": "/assets/or8.png"},
-            {"name": "AWP", "desc": "Atheris (Field-Tested)", "img": "/assets/or9.png"},
-            {"name": "AK-47", "desc": "Redline (Minimal Wear)", "img": "/assets/or10.png"},
-            {"name": "Desert Eagle", "desc": "Code Red (Factory New)", "img": "https://community.akamai.steamstatic.com/economy/image/1k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k/360fx360f"},
-            {"name": "AWP", "desc": "Dragon Lore (Factory New)", "img": "https://community.akamai.steamstatic.com/economy/image/0k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k/360fx360f"},
-        ]
-    },
-    {
-        "key": "clutch",
-        "title": "Clutch Case",
-        "price": 5000,
-        "img": "https://cdn3d.iconscout.com/3d/premium/thumb/black-box-6348830-5222331.png",
-        "items": [
-            {"name": "AWP", "desc": "Atheris (Field-Tested)", "img": "https://community.akamai.steamstatic.com/economy/image/3k2j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k/360fx360f"},
-            {"name": "AK-47", "desc": "Redline (Minimal Wear)", "img": "https://community.akamai.steamstatic.com/economy/image/2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k/360fx360f"},
-            {"name": "Desert Eagle", "desc": "Code Red (Factory New)", "img": "https://community.akamai.steamstatic.com/economy/image/1k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k/360fx360f"},
-            {"name": "AWP", "desc": "Dragon Lore (Factory New)", "img": "https://community.akamai.steamstatic.com/economy/image/0k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k/360fx360f"},
-            {"name": "Five-SeveN", "desc": "Anodized Gunmetal (Factory New)", "img": "https://community.akamai.steamstatic.com/economy/image/5k4j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k3j2k/360fx360f"},
-            {"name": "SG 553", "desc": "Army Sheen (Minimal Wear)", "img": "https://community.akamai.steamstatic.com/economy/image/QmZyQ2Hf9W2v3bK7Wc3v5wqCz6QKzQ8Jz8Dq2F3F8h2D3Q/360fx360f"},
-            {"name": "P250", "desc": "Boreal Forest (Battle-Scarred)", "img": "https://community.akamai.steamstatic.com/economy/image/8jYQ6v9U2n5k2v9k2m5k2v9k2m5k2v9k2m5k2v9k2m5k2v9k/360fx360f"},
+            {"name": "M4A1-S", "desc": "Guardian (Minimal Wear)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468391.png"},
+            {"name": "USP-S", "desc": "Orion (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468389.png"},
+            {"name": "FAMAS", "desc": "Commemoration (Minimal Wear)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468384.png"},
+            {"name": "AWP", "desc": "Atheris (Field-Tested)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468382.png"},
+            {"name": "AK-47", "desc": "Redline (Minimal Wear)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468383.png"},
+            {"name": "Desert Eagle", "desc": "Code Red (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468388.png"},
+            {"name": "AWP", "desc": "Dragon Lore (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468382.png"},
         ]
     }
 ]
