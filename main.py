@@ -43,3 +43,7 @@ async def open_case(case: str = Form(...)):
         return JSONResponse(content={"error": "Нет такого кейса"}, status_code=400)
     won = random.choice(items)
     return JSONResponse(content={"item": won})
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
