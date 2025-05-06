@@ -107,42 +107,50 @@ body {
     z-index: 100;
 }
 
-.roulette-container {
+.case-animation {
     position: relative;
-    width: 100%;
-    max-width: 400px;
+    width: 300px;
     height: 300px;
-    overflow: hidden;
+    margin: 0 auto;
 }
 
-.roulette-wheel {
+.spinning-items {
     position: absolute;
     width: 100%;
-    height: 3000px; /* Высота должна быть достаточно большой */
+    height: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 2s cubic-bezier(0.1, 0.8, 0.2, 1);
-}
-
-.roulette-item {
-    width: 80%;
-    max-width: 300px;
-    height: 200px;
-    margin: 10px 0;
-    display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(30, 30, 47, 0.7);
-    border-radius: 15px;
-    border: 2px solid #2a3a6e;
 }
 
-.roulette-item img {
+.spinning-item {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-origin: 150px;
+    transition: transform 0.5s ease-out;
+}
+
+.spinning-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+}
+
+.case-center {
+    position: absolute;
     width: 150px;
     height: 150px;
-    object-fit: contain;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: url('https://cdn-icons-png.flaticon.com/512/2489/2489317.png') no-repeat center;
+    background-size: contain;
+    z-index: 2;
 }
 
 .result-screen {
@@ -237,22 +245,20 @@ body {
         grid-template-columns: 1fr;
     }
     
-    .roulette-container {
-        width: 100%;
-        height: 200px;
+    .case-animation {
+        width: 280px;
+        height: 280px;
     }
     
-    .roulette-wheel {
-        height: 2000px; /* Увеличенная высота для мобильных устройств */
+    .spinning-item {
+        width: 100px;
+        height: 100px;
+        transform-origin: 140px;
     }
     
-    .roulette-item {
-        height: 150px;
-    }
-    
-    .roulette-item img {
-        width: 120px;
-        height: 120px;
+    .spinning-item img {
+        width: 80px;
+        height: 80px;
     }
     
     .prize-card img {
