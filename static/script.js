@@ -1,4 +1,3 @@
-// Пример данных предметов
 const ITEMS = {
     basic: [
         { name: "AK-47 | Красная линия", image: "https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot7HxfDhjxszJemkV09-5lpKKkPLLMrfFqWNU6dNoxLzD9I6j3Qzk_EFlY2qhI9KUc1M3YV6D-ljqwu-505C7vZvJynIx6SQj4H_EqkO9n1gYPGI9JmXWJw/360fx360f", rarity: "rare" },
@@ -21,9 +20,10 @@ let state = {
     currentCase: null,
     isSpinning: false,
     spinInterval: null,
-    targetItem: null,
-    currentAngle: 0,
-    spinSpeed: 0
+    currentPosition: 0,
+    spinSpeed: 80,
+    targetPosition: 0,
+    targetItem: null
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.isSpinning = false;
     });
 
-    // Инициализация Telegram WebApp
+    // Инициализация Telegram WebApp (если необходимо)
     if (window.Telegram?.WebApp) {
         Telegram.WebApp.expand();
         Telegram.WebApp.enableClosingConfirmation();
@@ -66,82 +66,81 @@ function openCase(caseType, price) {
     
     document.getElementById('main').classList.remove('active');
     document.getElementById('case-opening').style.display = 'flex';
-    document.getElementById('result-screen').classList.add('hidden');
     
-    const spinningContainer = document.getElementById('spinning-items');
-    spinningContainer.innerHTML = '';
+    const rouletteWheel = document.getElementById('roulette-wheel');
+    rouletteWheel.innerHTML = '';
     
-    // Добавляем предметы в круг
-    const items = ITEMS[caseType];
-    const angleStep = 360 / items.length;
+    // Добавляем предметы в рулетку (3 копии для плавности)
+    for (let i = 0; i < 3; i++) {
+        ITEMS[caseType].forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'roulette-item';
+            itemEl.innerHTML = `<img src="${item.image}" alt="${item.name}">`;
+            rouletteWheel.appendChild(itemEl);
+        });
+    }
     
-    items.forEach((item, index) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'spinning-item';
-        itemEl.innerHTML = `<img src="${item.image}" alt="${item.name}">`;
-        
-        const angle = index * angleStep;
-        const rad = angle * (Math.PI / 180);
-        const x = Math.sin(rad) * 150;
-        const y = -Math.cos(rad) * 150;
-        
-        itemEl.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
-        spinningContainer.appendChild(itemEl);
+    // Отправляем запрос на бэкенд для получения выпавшего предмета
+    fetch('/open-case', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ caseType: caseType })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const wonItem = data.item;
+        state.targetItem = wonItem;
+        startSpin();
+    })
+    .catch(error => {
+        console.error('Ошибка при открытии кейса:', error);
     });
-    
-    // Выбираем случайный предмет для остановки
-    state.targetItem = items[Math.floor(Math.random() * items.length)];
-    
-    // Запускаем вращение
-    startSpin();
 }
 
 function startSpin() {
-    state.currentAngle = 0;
-    state.spinSpeed = 30;
-    const spinningContainer = document.getElementById('spinning-items');
+    const rouletteWheel = document.getElementById('roulette-wheel');
+    const itemHeight = 220; // Высота одного предмета
+    const spinDuration = 5000; // 5 секунд
+    
+    // Начальная позиция
+    state.currentPosition = 0;
+    rouletteWheel.style.transform = `translateY(${state.currentPosition}px)`;
+    
+    // Рассчитываем целевую позицию
+    const items = ITEMS[state.currentCase];
+    const itemIndex = items.findIndex(item => item === state.targetItem);
+    const totalItems = items.length * 3; // 3 копии предметов для плавности
+    const stopIndex = itemIndex + items.length; // Останавливаем на второй копии выпавшего предмета
+    state.targetPosition = -(stopIndex * itemHeight + (Math.random() * itemHeight)); // Добавляем случайный смещение
+    
+    // Запуск анимации
+    const startTime = Date.now();
     
     function animate() {
-        if (state.spinSpeed > 0.1) {
-            state.currentAngle += state.spinSpeed;
-            state.spinSpeed *= 0.98; // Постепенное замедление
-            
-            spinningContainer.style.transform = `rotate(${state.currentAngle}deg)`;
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / spinDuration, 1);
+        
+        // Замедление к концу анимации
+        const easing = 1 - Math.pow(1 - progress, 3);
+        
+        // Прокрутка с замедлением
+        state.currentPosition = easing * state.targetPosition;
+        rouletteWheel.style.transform = `translateY(${state.currentPosition}px)`;
+        
+        if (progress < 1) {
             requestAnimationFrame(animate);
         } else {
-            // Плавная остановка на выбранном предмете
-            const items = ITEMS[state.currentCase];
-            const targetIndex = items.findIndex(item => item.name === state.targetItem.name);
-            const angleStep = 360 / items.length;
-            const targetAngle = 360 - (targetIndex * angleStep);
-            
-            const spinDuration = 1000; // 1 секунда для точной остановки
-            const startTime = Date.now();
-            const startAngle = state.currentAngle % 360;
-            
-            function finalSpin() {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min(elapsed / spinDuration, 1);
-                const easing = Math.sin(progress * Math.PI / 2); // Easing out
-                
-                state.currentAngle = startAngle + (targetAngle - startAngle) * easing;
-                spinningContainer.style.transform = `rotate(${state.currentAngle}deg)`;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(finalSpin);
-                } else {
-                    setTimeout(showResult, 500);
-                }
-            }
-            
-            finalSpin();
+            finishSpin();
         }
     }
     
-    animate();
+    requestAnimationFrame(animate);
 }
 
-function showResult() {
+function finishSpin() {
+    // Показываем выигранный предмет
     document.getElementById('won-item-img').src = state.targetItem.image;
     document.getElementById('won-item-name').textContent = state.targetItem.name;
     
@@ -149,6 +148,7 @@ function showResult() {
     rarityBadge.textContent = state.targetItem.rarity.toUpperCase();
     rarityBadge.className = `rarity-badge ${state.targetItem.rarity}`;
     
+    // Показываем экран результата
     document.getElementById('result-screen').classList.remove('hidden');
 }
 
