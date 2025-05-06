@@ -1,45 +1,21 @@
-const CASES = [
-    {
-        key: "rusty",
-        title: "Rusty Case",
-        price: 500,
-        img: "https://i.imgur.com/wZRCiJb.png"
-    },
-    {
-        key: "tactical",
-        title: "Tactical Case",
-        price: 3000,
-        img: "https://i.imgur.com/L2NqV8P.png"
-    },
-    {
-        key: "clutch",
-        title: "Clutch Case",
-        price: 5000,
-        img: "https://i.imgur.com/pQZtA9h.png"
-    },
-    {
-        key: "allin",
-        title: "All In Case",
-        price: 10000,
-        img: "https://i.imgur.com/8vCqSVZ.png"
-    }
-];
-
 let balance = localStorage.getItem('balance') ? parseInt(localStorage.getItem('balance')) : 5000;
 let inventory = JSON.parse(localStorage.getItem('inventory') || "[]");
+let CASES = [];
 
 function setBalance(val) {
     balance = val;
     document.querySelector('.navbar #balance').textContent = `💎 ${balance}`;
     localStorage.setItem('balance', balance);
 }
-
 function setInventory(inv) {
     inventory = inv;
     localStorage.setItem('inventory', JSON.stringify(inv));
 }
-
-function renderApp(tab = "cases") {
+async function renderApp(tab = "cases") {
+    if (!CASES.length) {
+        const res = await fetch('/cases');
+        CASES = (await res.json()).cases;
+    }
     document.getElementById('app').innerHTML = `
         <div class="navbar">
             <span>CS2 Бот</span>
@@ -49,7 +25,6 @@ function renderApp(tab = "cases") {
         <div class="tabs">
             <div class="tab-btn ${tab === "cases" ? "active" : ""}" data-tab="cases">Кейсы</div>
             <div class="tab-btn ${tab === "inventory" ? "active" : ""}" data-tab="inventory">Инвентарь</div>
-            <div class="tab-btn ${tab === "shop" ? "active" : ""}" data-tab="shop">Магазин</div>
             <div class="tab-btn ${tab === "profile" ? "active" : ""}" data-tab="profile">Профиль</div>
         </div>
     `;
@@ -59,9 +34,7 @@ function renderApp(tab = "cases") {
     if (tab === "cases") renderCases();
     if (tab === "inventory") renderInventory();
     if (tab === "profile") renderProfile();
-    if (tab === "shop") renderShop();
 }
-
 function renderCases() {
     const grid = CASES.map(c =>
         `<div class="case-card" data-key="${c.key}">
@@ -78,14 +51,11 @@ function renderCases() {
         card.onclick = () => openCasePreview(card.dataset.key);
     });
 }
-
 async function openCasePreview(caseKey) {
-    // Получаем содержимое кейса с backend
     const res = await fetch(`/case-content?case=${caseKey}`);
     const data = await res.json();
     const items = data.items;
     let currentIndex = 0;
-
     function renderCaseModal() {
         document.body.insertAdjacentHTML('beforeend', `
             <div class="case-preview-modal" id="case-modal">
@@ -104,8 +74,6 @@ async function openCasePreview(caseKey) {
                 </div>
             </div>
         `);
-
-        // Вертикальный скролл по свайпу/колесу мыши
         const list = document.getElementById('case-items-list');
         list.scrollTop = currentIndex * 110;
         list.onwheel = (e) => {
@@ -114,11 +82,9 @@ async function openCasePreview(caseKey) {
             renderCaseModalUpdate();
             e.preventDefault();
         };
-        // Закрытие
         document.getElementById('close-case-modal').onclick = () => {
             document.getElementById('case-modal').remove();
         };
-        // Открытие кейса
         document.getElementById('open-case-btn').onclick = () => {
             if (balance < CASES.find(c=>c.key===caseKey).price) {
                 alert("Недостаточно баланса!");
@@ -127,7 +93,6 @@ async function openCasePreview(caseKey) {
             openCaseSpin(caseKey, items);
         };
     }
-
     function renderCaseModalUpdate() {
         const list = document.getElementById('case-items-list');
         list.innerHTML = items.map((item, idx) => `
@@ -139,24 +104,18 @@ async function openCasePreview(caseKey) {
         `).join("");
         list.scrollTop = currentIndex * 110;
     }
-
     renderCaseModal();
 }
-
 async function openCaseSpin(caseKey, items) {
     document.getElementById('case-modal').remove();
-    // Массив для спина: много предметов + выигрышный в конце
     let spinItems = [];
     for (let i = 0; i < 15; i++) spinItems.push(items[Math.floor(Math.random()*items.length)]);
-    // Получаем выигрышный предмет с backend
     const res = await fetch('/open-case', {
         method: "POST",
         body: new URLSearchParams({case: caseKey})
     });
     const data = await res.json();
     spinItems.push(data.item);
-
-    // Показываем анимацию спина (вертикальный прокрут)
     document.body.insertAdjacentHTML('beforeend', `
         <div class="case-preview-modal" id="spin-modal">
             <div class="case-preview-content">
@@ -175,13 +134,11 @@ async function openCaseSpin(caseKey, items) {
             </div>
         </div>
     `);
-    // Анимация
     setTimeout(() => {
         const list = document.getElementById('spin-list');
         list.style.transform = `translateY(-${spinItems.length-1}00%)`;
         setTimeout(() => {
             document.getElementById('spin-close-btn').style.display = '';
-            // Добавляем предмет в инвентарь
             setBalance(balance - CASES.find(c=>c.key===caseKey).price);
             inventory.push(spinItems[spinItems.length-1]);
             setInventory(inventory);
@@ -192,7 +149,6 @@ async function openCaseSpin(caseKey, items) {
         renderApp("inventory");
     };
 }
-
 function renderInventory() {
     document.getElementById('main-content').innerHTML = `
         <h1>Инвентарь</h1>
@@ -207,7 +163,6 @@ function renderInventory() {
         </div>
     `;
 }
-
 function renderProfile() {
     document.getElementById('main-content').innerHTML = `
         <div class="profile-block">
@@ -218,18 +173,6 @@ function renderProfile() {
         </div>
     `;
 }
-
-function renderShop() {
-    document.getElementById('main-content').innerHTML = `
-        <div class="shop-block">
-            <h2>Магазин</h2>
-            <div class="shop-desc">В будущем здесь появится магазин!</div>
-            <button onclick="alert('Скоро!')">Купить что-то</button>
-        </div>
-    `;
-}
-
-// Init
 window.onload = () => {
     renderApp();
 };
