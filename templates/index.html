@@ -11,12 +11,9 @@
     <div id="app"></div>
     <script src="/static/script.js"></script>
     <script>
-        // Инициализация Telegram WebApp API
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
-            // Получаем данные пользователя Telegram
             const tgUser = window.Telegram.WebApp.initDataUnsafe.user || {};
-            // Передаём ник в JS приложение
             window.tgUserName = tgUser.username || tgUser.first_name || "Игрок";
         } else {
             window.tgUserName = "Гость";
