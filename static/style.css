@@ -15,22 +15,21 @@ body {
     overflow: hidden;
 }
 
-.tg-app {
-    display: flex;
-    flex-direction: column;
+.app-container {
+    position: relative;
+    width: 100%;
     height: 100vh;
-    max-height: -webkit-fill-available;
 }
 
-.content {
-    display: none;
-    flex: 1;
-    overflow-y: auto;
+.main-screen {
+    width: 100%;
+    height: 100%;
     padding: 15px;
     padding-bottom: 70px;
+    overflow-y: auto;
 }
 
-.content.active {
+.main-screen.active {
     display: block;
 }
 
@@ -93,130 +92,93 @@ body {
     font-size: 14px;
 }
 
-.spin-reveal-container {
+/* Анимация открытия кейса */
+.case-opening-screen {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.9);
-    display: flex;
+    background: #0f0f1a;
+    display: none;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     z-index: 100;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
 }
 
-.spin-reveal-container.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.spin-stage {
+.roulette-container {
     position: relative;
     width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.spinning-case {
-    width: 200px;
-    height: 200px;
-    animation: spin 1.5s linear infinite, pulse 1.5s ease infinite;
-    position: absolute;
-    z-index: 2;
-    top: 20%;
-}
-
-.spinning-case img {
-    width: 100%;
     height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
+    overflow: hidden;
 }
 
 .roulette-items {
     position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 300px;
-    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
-    padding: 120px 0;
+    transition: transform 2s cubic-bezier(0.1, 0.8, 0.2, 1);
 }
 
 .roulette-item {
-    width: 100px;
-    height: 100px;
-    margin: 15px 0;
+    width: 80%;
+    max-width: 300px;
+    height: 200px;
+    margin: 10px 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex-shrink: 0;
+    background: rgba(30, 30, 47, 0.7);
+    border-radius: 15px;
+    border: 2px solid #2a3a6e;
 }
 
 .roulette-item img {
-    width: 80px;
-    height: 80px;
+    width: 150px;
+    height: 150px;
     object-fit: contain;
-    animation: float 2s ease-in-out infinite;
 }
 
-.reveal-stage {
+.result-screen {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    transform: scale(0.5);
-    opacity: 0;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(0,0,0,0.8);
+    z-index: 10;
 }
 
-.reveal-stage.active {
-    transform: scale(1);
-    opacity: 1;
-}
-
-.prize-item {
-    text-align: center;
-    background: rgba(30, 30, 47, 0.8);
-    padding: 20px;
+.prize-card {
+    background: #16213e;
+    padding: 30px;
     border-radius: 20px;
+    text-align: center;
+    width: 90%;
+    max-width: 350px;
+    border: 2px solid #4cc9f0;
     box-shadow: 0 0 30px rgba(76, 201, 240, 0.5);
-    z-index: 3;
-    width: 80%;
-    max-width: 300px;
 }
 
-.prize-item img {
-    width: 120px;
-    height: 120px;
+.prize-card img {
+    width: 200px;
+    height: 200px;
     object-fit: contain;
-    margin-bottom: 15px;
+    margin: 20px 0;
     animation: float 2s ease-in-out infinite;
 }
 
 .rarity-badge {
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 12px;
+    padding: 8px 15px;
+    border-radius: 20px;
     font-weight: bold;
-    margin: 10px 0;
+    margin: 15px 0;
+    font-size: 14px;
 }
 
 .common { background: #4cc9f0; }
@@ -228,11 +190,12 @@ body {
     background: linear-gradient(135deg, #4cc9f0, #4895ef);
     color: white;
     border: none;
-    padding: 12px 25px;
+    padding: 15px 30px;
     border-radius: 30px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 20px;
+    font-size: 16px;
     transition: all 0.3s;
 }
 
@@ -250,24 +213,9 @@ body {
     background-image: url('https://cdn-icons-png.flaticon.com/512/5726/5726470.png');
     background-size: contain;
     background-repeat: repeat;
-    opacity: 0;
-    z-index: 1;
+    opacity: 0.5;
     animation: confettiFall 5s linear infinite;
-}
-
-.reveal-stage.active .confetti {
-    opacity: 0.6;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0) scale(1); }
-    50% { transform: rotate(180deg) scale(1.2); }
-    100% { transform: rotate(360deg) scale(1); }
-}
-
-@keyframes pulse {
-    0%, 100% { filter: drop-shadow(0 0 15px gold); }
-    50% { filter: drop-shadow(0 0 30px #e94560); }
+    z-index: -1;
 }
 
 @keyframes float {
@@ -280,106 +228,22 @@ body {
     100% { background-position: 0 0; }
 }
 
-.bottom-nav {
-    display: flex;
-    justify-content: space-around;
-    background: #16213e;
-    padding: 10px 0;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 90;
-    border-top: 1px solid #2a3a6e;
-}
-
-.nav-btn {
-    background: none;
-    border: none;
-    color: #b8b8b8;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    padding: 5px 10px;
-    font-size: 12px;
-    transition: all 0.3s;
-}
-
-.nav-btn.active {
-    color: #4cc9f0;
-    transform: translateY(-5px);
-}
-
-.nav-btn img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-}
-
-.shop-items {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.shop-item {
-    background: #16213e;
-    border-radius: 12px;
-    padding: 15px;
-    text-align: center;
-}
-
-.shop-item img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    margin-bottom: 10px;
-}
-
-.profile-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.profile-header .avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-.friends-list {
-    margin-top: 20px;
-}
-
-.friend {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background: #16213e;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
-
-.friend img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-@media (max-width: 400px) {
-    .cases-grid, .shop-items {
+@media (max-width: 500px) {
+    .cases-grid {
         grid-template-columns: 1fr;
     }
     
-    .case img {
-        width: 60px;
-        height: 60px;
+    .roulette-item {
+        height: 150px;
+    }
+    
+    .roulette-item img {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .prize-card img {
+        width: 150px;
+        height: 150px;
     }
 }
