@@ -17,7 +17,6 @@ async function renderApp(tab = "cases") {
         const res = await fetch('/cases');
         CASES = (await res.json()).cases;
     }
-    // Получаем ник из глобальной переменной (установленной в index.html)
     userName = window.tgUserName || "Игрок";
 
     document.getElementById('app').innerHTML = `
@@ -121,7 +120,6 @@ async function openCaseSpin(caseKey, items) {
     const data = await res.json();
     spinItems.push(data.item);
 
-    // Показываем спин
     document.body.insertAdjacentHTML('beforeend', `
         <div class="case-preview-modal" id="spin-modal">
             <div class="case-preview-content">
@@ -141,7 +139,6 @@ async function openCaseSpin(caseKey, items) {
         </div>
     `);
 
-    // Плавная прокрутка
     const list = document.getElementById('spin-list');
     const spinHeight = 180 * (spinItems.length - 1);
     setTimeout(() => {
