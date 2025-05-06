@@ -41,7 +41,21 @@ CASES = [
             {"name": "AWP", "desc": "Dragon Lore (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468382.png"},
         ]
     },
-    # Можно добавить еще кейсы по аналогии
+    {
+        "key": "clutch",
+        "title": "Clutch Case",
+        "price": 5000,
+        "img": "https://cdn-icons-png.flaticon.com/512/3468/3468385.png",
+        "items": [
+            {"name": "AWP", "desc": "Atheris (Field-Tested)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468382.png"},
+            {"name": "AK-47", "desc": "Redline (Minimal Wear)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468383.png"},
+            {"name": "Desert Eagle", "desc": "Code Red (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468388.png"},
+            {"name": "AWP", "desc": "Dragon Lore (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468382.png"},
+            {"name": "Five-SeveN", "desc": "Anodized Gunmetal (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468387.png"},
+            {"name": "SG 553", "desc": "Army Sheen (Minimal Wear)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468376.png"},
+            {"name": "P250", "desc": "Boreal Forest (Battle-Scarred)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468390.png"},
+        ]
+    }
 ]
 
 @app.get("/", response_class=HTMLResponse)
