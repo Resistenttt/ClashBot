@@ -93,7 +93,6 @@ body {
     font-size: 14px;
 }
 
-/* Анимация открытия кейса */
 .spin-reveal-container {
     position: fixed;
     top: 0;
@@ -119,18 +118,19 @@ body {
 .spin-stage {
     position: relative;
     width: 100%;
-    height: 200px;
+    height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    overflow: hidden;
 }
 
 .spinning-case {
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     animation: spin 1.5s linear infinite, pulse 1.5s ease infinite;
-    position: relative;
+    position: absolute;
     z-index: 2;
+    top: 20%;
 }
 
 .spinning-case img {
@@ -140,37 +140,29 @@ body {
     filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
 }
 
-.particles {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://cdn-icons-png.flaticon.com/512/2583/2583344.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    animation: float 3s ease-in-out infinite;
-    opacity: 0.6;
-}
-
 .roulette-items {
     position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    height: 100px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 100%;
     display: flex;
-    transform: translateY(-50%);
+    flex-direction: column;
+    align-items: center;
     overflow: hidden;
+    padding: 120px 0;
 }
 
 .roulette-item {
-    min-width: 100px;
+    width: 100px;
     height: 100px;
-    margin: 0 10px;
+    margin: 15px 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .roulette-item img {
@@ -259,16 +251,14 @@ body {
     background-size: contain;
     background-repeat: repeat;
     opacity: 0;
-    transition: opacity 0.5s;
     z-index: 1;
+    animation: confettiFall 5s linear infinite;
 }
 
 .reveal-stage.active .confetti {
     opacity: 0.6;
-    animation: confettiFall 5s linear infinite;
 }
 
-/* Анимации */
 @keyframes spin {
     0% { transform: rotate(0) scale(1); }
     50% { transform: rotate(180deg) scale(1.2); }
@@ -286,16 +276,10 @@ body {
 }
 
 @keyframes confettiFall {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 1000px; }
+    0% { background-position: 0 -1000px; }
+    100% { background-position: 0 0; }
 }
 
-@keyframes slide {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-}
-
-/* Остальные стили (магазин, профиль, друзья) */
 .bottom-nav {
     display: flex;
     justify-content: space-around;
