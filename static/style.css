@@ -102,19 +102,23 @@ body {
     background: #0f0f1a;
     display: none;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     z-index: 100;
 }
 
 .roulette-container {
     position: relative;
     width: 100%;
-    height: 100%;
+    max-width: 400px;
+    height: 300px;
     overflow: hidden;
 }
 
-.roulette-items {
+.roulette-wheel {
     position: absolute;
     width: 100%;
+    height: 3000px; /* Высота должна быть достаточно большой */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -231,6 +235,15 @@ body {
 @media (max-width: 500px) {
     .cases-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .roulette-container {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .roulette-wheel {
+        height: 2000px; /* Увеличенная высота для мобильных устройств */
     }
     
     .roulette-item {
