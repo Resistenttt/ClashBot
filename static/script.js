@@ -48,4 +48,91 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('case-opening').style.display = 'none';
         document.getElementById('main').classList.add('active');
         document.getElementById('result-screen').classList.add('hidden');
-        state.isSpinning =
+        state.isSpinning = false;
+    });
+
+    // Инициализация Telegram WebApp
+    if (window.Telegram?.WebApp) {
+        Telegram.WebApp.expand();
+        Telegram.WebApp.enableClosingConfirmation();
+    }
+});
+
+function openCase(caseType, price) {
+    state.currentCase = caseType;
+    state.balance -= price;
+    updateBalance();
+    state.isSpinning = true;
+    
+    document.getElementById('main').classList.remove('active');
+    document.getElementById('case-opening').style.display = 'flex';
+    
+    const rouletteContainer = document.getElementById('roulette-items');
+    rouletteContainer.innerHTML = '';
+    
+    // Добавляем предметы в рулетку (3 копии для плавности)
+    for (let i = 0; i < 3; i++) {
+        ITEMS[caseType].forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'roulette-item';
+            itemEl.innerHTML = `<img src="${item.image}" alt="${item.name}">`;
+            rouletteContainer.appendChild(itemEl);
+        });
+    }
+    
+    // Выбираем случайный предмет для остановки
+    const items = ITEMS[caseType];
+    state.targetItem = items[Math.floor(Math.random() * items.length)];
+    
+    startSpin();
+}
+
+function startSpin() {
+    const roulette = document.getElementById('roulette-items');
+    const itemHeight = 220; // Высота одного предмета
+    const spinDuration = 3000; // 3 секунды
+    
+    // Начальная позиция
+    state.currentPosition = 0;
+    roulette.style.transform = `translateY(${state.currentPosition}px)`;
+    
+    // Запуск анимации
+    const startTime = Date.now();
+    
+    function animate() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / spinDuration, 1);
+        
+        // Замедление к концу анимации
+        const easing = 1 - Math.pow(1 - progress, 3);
+        
+        // Прокрутка с замедлением
+        state.currentPosition = -easing * (roulette.scrollHeight / 2 - itemHeight * 3);
+        roulette.style.transform = `translateY(${state.currentPosition}px)`;
+        
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            finishSpin();
+        }
+    }
+    
+    requestAnimationFrame(animate);
+}
+
+function finishSpin() {
+    // Показываем выигранный предмет
+    document.getElementById('won-item-img').src = state.targetItem.image;
+    document.getElementById('won-item-name').textContent = state.targetItem.name;
+    
+    const rarityBadge = document.getElementById('rarity-badge');
+    rarityBadge.textContent = state.targetItem.rarity.toUpperCase();
+    rarityBadge.className = `rarity-badge ${state.targetItem.rarity}`;
+    
+    // Показываем экран результата
+    document.getElementById('result-screen').classList.remove('hidden');
+}
+
+function updateBalance() {
+    document.getElementById('balance').textContent = state.balance;
+}
