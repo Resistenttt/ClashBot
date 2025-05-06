@@ -1,10 +1,20 @@
+import os
+import random
+import asyncio
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import random
-import os
 
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import WebAppInfo, KeyboardButton, ReplyKeyboardMarkup
+from aiogram.utils.executor import start_polling
+
+# --- Настройки ---
+BOT_TOKEN = "7692515430:AAGyPtaAOhHl5hcIYQOMmHqWoYJiVVee0Zc"  # Впиши сюда токен своего бота из BotFather
+WEBAPP_URL = "https://clashbot-5j34.onrender.com/"  # URL, где развернуто твое FastAPI приложение
+
+# --- FastAPI ---
 app = FastAPI()
 BASE_DIR = os.path.dirname(__file__)
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
@@ -15,22 +25,22 @@ CASES = [
         "key": "rusty",
         "title": "Rusty Case",
         "price": 500,
-        "img": "/static/Case1.png",
+        "img": "https://cdn-icons-png.flaticon.com/512/3468/3468376.png",
         "items": [
-            {"name": "SG 553", "desc": "Army Sheen (Minimal Wear)", "img": "/static/or1.png"},
-            {"name": "P250", "desc": "Boreal Forest (Battle-Scarred)", "img": "/static/or2.png"},
-            {"name": "Five-SeveN", "desc": "Anodized Gunmetal (Factory New)", "img": "/static/or3.png"},
-            {"name": "AWP", "desc": "Atheris (Field-Tested)", "img": "/static/or4.png"},
-            {"name": "AK-47", "desc": "Redline (Minimal Wear)", "img": "/static/or5.png"},
-            {"name": "Desert Eagle", "desc": "Code Red (Factory New)", "img": "/static/or6.png"},
-            {"name": "AWP", "desc": "Dragon Lore (Factory New)", "img": "/static/or7.png"},
+            {"name": "SG 553", "desc": "Army Sheen (Minimal Wear)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468376.png"},
+            {"name": "P250", "desc": "Boreal Forest (Battle-Scarred)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468390.png"},
+            {"name": "Five-SeveN", "desc": "Anodized Gunmetal (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468387.png"},
+            {"name": "AWP", "desc": "Atheris (Field-Tested)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468382.png"},
+            {"name": "AK-47", "desc": "Redline (Minimal Wear)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468383.png"},
+            {"name": "Desert Eagle", "desc": "Code Red (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468388.png"},
+            {"name": "AWP", "desc": "Dragon Lore (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468382.png"},
         ]
     },
     {
         "key": "tactical",
         "title": "Tactical Case",
         "price": 3000,
-        "img": "/static/Case1.png",
+        "img": "https://cdn-icons-png.flaticon.com/512/3468/3468391.png",
         "items": [
             {"name": "M4A1-S", "desc": "Guardian (Minimal Wear)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468391.png"},
             {"name": "USP-S", "desc": "Orion (Factory New)", "img": "https://cdn-icons-png.flaticon.com/512/3468/3468389.png"},
@@ -66,7 +76,32 @@ async def open_case(case: str = Form(...)):
             return JSONResponse(content={"item": won})
     return JSONResponse(content={"error": "Нет такого кейса"}, status_code=400)
 
+
+# --- Telegram bot setup ---
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher(bot)
+
+@dp.message_handler(commands=["start"])
+async def start_handler(message: types.Message):
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    button = KeyboardButton(text="Открыть кейсы", web_app=WebAppInfo(url=WEBAPP_URL))
+    keyboard.add(button)
+    await message.answer("Нажми кнопку ниже, чтобы открыть кейсы:", reply_markup=keyboard)
+
+# Запуск бота и FastAPI вместе
+async def start_bot():
+    await dp.start_polling()
+
+# Запуск FastAPI и бота вместе через asyncio
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    import threading
+
+    def run_uvicorn():
+        uvicorn.run(app, host="0.0.0.0", port=8000)
+
+    # Запускаем FastAPI в отдельном потоке
+    threading.Thread(target=run_uvicorn, daemon=True).start()
+
+    # Запускаем бота в главном потоке
+    asyncio.run(start_bot())
