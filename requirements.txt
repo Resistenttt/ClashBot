@@ -3,3 +3,4 @@ uvicorn
 python-telegram-bot
 aiohttp
 jinja2
+python-multipart
