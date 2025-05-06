@@ -23,7 +23,7 @@ let state = {
     spinInterval: null,
     currentPosition: 0,
     spinSpeed: 50,
-    targetItem: null
+    targetPosition: 0
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -67,8 +67,8 @@ function openCase(caseType, price) {
     document.getElementById('main').classList.remove('active');
     document.getElementById('case-opening').style.display = 'flex';
     
-    const rouletteContainer = document.getElementById('roulette-items');
-    rouletteContainer.innerHTML = '';
+    const rouletteWheel = document.getElementById('roulette-wheel');
+    rouletteWheel.innerHTML = '';
     
     // Добавляем предметы в рулетку (3 копии для плавности)
     for (let i = 0; i < 3; i++) {
@@ -76,25 +76,44 @@ function openCase(caseType, price) {
             const itemEl = document.createElement('div');
             itemEl.className = 'roulette-item';
             itemEl.innerHTML = `<img src="${item.image}" alt="${item.name}">`;
-            rouletteContainer.appendChild(itemEl);
+            rouletteWheel.appendChild(itemEl);
         });
     }
     
-    // Выбираем случайный предмет для остановки
-    const items = ITEMS[caseType];
-    state.targetItem = items[Math.floor(Math.random() * items.length)];
-    
-    startSpin();
+    // Отправляем запрос на бэкенд для получения выпавшего предмета
+    fetch('/open-case', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ caseType: caseType })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const wonItem = data.item;
+        state.targetItem = wonItem;
+        startSpin();
+    })
+    .catch(error => {
+        console.error('Ошибка при открытии кейса:', error);
+    });
 }
 
 function startSpin() {
-    const roulette = document.getElementById('roulette-items');
+    const rouletteWheel = document.getElementById('roulette-wheel');
     const itemHeight = 220; // Высота одного предмета
-    const spinDuration = 3000; // 3 секунды
+    const spinDuration = 5000; // 5 секунд
     
     // Начальная позиция
     state.currentPosition = 0;
-    roulette.style.transform = `translateY(${state.currentPosition}px)`;
+    rouletteWheel.style.transform = `translateY(${state.currentPosition}px)`;
+    
+    // Рассчитываем целевую позицию
+    const items = ITEMS[state.currentCase];
+    const itemIndex = items.findIndex(item => item === state.targetItem);
+    const totalItems = items.length * 3; // 3 копии предметов для плавности
+    const stopIndex = itemIndex + items.length; // Останавливаем на второй копии выпавшего предмета
+    state.targetPosition = -(stopIndex * itemHeight + (Math.random() * itemHeight)); // Добавляем случайный смещение
     
     // Запуск анимации
     const startTime = Date.now();
@@ -107,8 +126,8 @@ function startSpin() {
         const easing = 1 - Math.pow(1 - progress, 3);
         
         // Прокрутка с замедлением
-        state.currentPosition = -easing * (roulette.scrollHeight / 2 - itemHeight * 3);
-        roulette.style.transform = `translateY(${state.currentPosition}px)`;
+        state.currentPosition = easing * state.targetPosition;
+        rouletteWheel.style.transform = `translateY(${state.currentPosition}px)`;
         
         if (progress < 1) {
             requestAnimationFrame(animate);
