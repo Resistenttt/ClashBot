@@ -1,10 +1,17 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles  # Импортируем StaticFiles
-from pydantic import BaseModel
+import os
+from fastapi import FastAPI, Request, File, UploadFile
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 import random
 
 app = FastAPI()
+
+# Подключаем шаблонизатор Jinja2
+templates = Jinja2Templates(directory="static")
+
+# Подключаем статические файлы
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Пример данных для кейсов
@@ -31,28 +38,20 @@ PROBABILITIES = {
     'rare': [0.1, 0.1, 0.3, 0.3, 0.2]
 }
 
-@app.get("/")
-async def read_root():
-    return FileResponse("static/index.html")
-
-class OpenCaseRequest(BaseModel):
-    caseType: str
-
-def spin_case(items, probabilities):
-    selected_item = random.choices(items, weights=probabilities, k=1)[0]
-    return selected_item
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    with open("static/index.html", "r") as file:
+        return HTMLResponse(content=file.read(), status_code=200)
 
 @app.post("/open-case")
-async def open_case(request: OpenCaseRequest):
-    case_type = request.caseType
-    
-    if case_type not in ITEMS:
+async def open_case(caseType: str):
+    if caseType not in ITEMS:
         return JSONResponse(content={"error": "Неверный тип кейса"}, status_code=400)
     
-    items = ITEMS[case_type]
-    probabilities = PROBABILITIES[case_type]
+    items = ITEMS[caseType]
+    probabilities = PROBABILITIES[caseType]
     
-    won_item = spin_case(items, probabilities)
+    won_item = random.choices(items, weights=probabilities, k=1)[0]
     return JSONResponse(content={"item": won_item})
 
 if __name__ == "__main__":
