@@ -172,6 +172,7 @@ function renderInventory() {
     `;
 }
 function renderProfile() {
+    userName = window.tgUserName || "Игрок";
     document.getElementById('main-content').innerHTML = `
         <div class="profile-block">
             <h2>Профиль</h2>
