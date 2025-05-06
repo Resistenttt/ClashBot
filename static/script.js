@@ -1,6 +1,7 @@
 let balance = localStorage.getItem('balance') ? parseInt(localStorage.getItem('balance')) : 5000;
 let inventory = JSON.parse(localStorage.getItem('inventory') || "[]");
 let CASES = [];
+let userName = "Игрок";
 
 function setBalance(val) {
     balance = val;
@@ -16,6 +17,9 @@ async function renderApp(tab = "cases") {
         const res = await fetch('/cases');
         CASES = (await res.json()).cases;
     }
+    // Получаем ник из глобальной переменной (установленной в index.html)
+    userName = window.tgUserName || "Игрок";
+
     document.getElementById('app').innerHTML = `
         <div class="navbar">
             <span>CS2 Бот</span>
@@ -175,7 +179,7 @@ function renderProfile() {
         <div class="profile-block">
             <h2>Профиль</h2>
             <div class="profile-balance">Баланс: 💎 ${balance}</div>
-            <div>Ник: <b>user123</b></div>
+            <div>Ник: <b>${userName}</b></div>
             <button onclick="setBalance(balance+10000);renderApp('profile');">Пополнить +10 000</button>
         </div>
     `;
