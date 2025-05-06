@@ -23,7 +23,8 @@ let state = {
     spinInterval: null,
     currentPosition: 0,
     spinSpeed: 50,
-    targetPosition: 0
+    targetPosition: 0,
+    targetItem: null
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -51,11 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
         state.isSpinning = false;
     });
 
-    // Инициализация Telegram WebApp
-    if (window.Telegram?.WebApp) {
-        Telegram.WebApp.expand();
-        Telegram.WebApp.enableClosingConfirmation();
-    }
+    // Инициализация Telegram WebApp (если необходимо)
+    // if (window.Telegram?.WebApp) {
+    //     Telegram.WebApp.expand();
+    //     Telegram.WebApp.enableClosingConfirmation();
+    // }
 });
 
 function openCase(caseType, price) {
