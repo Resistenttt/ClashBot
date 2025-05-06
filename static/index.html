@@ -9,7 +9,6 @@
 </head>
 <body>
     <div class="tg-app">
-        <!-- Основной контент -->
         <div class="content active" id="cases-tab">
             <div class="header">
                 <div class="balance">
@@ -20,25 +19,23 @@
             
             <div class="cases-grid">
                 <div class="case" data-price="500" data-type="basic">
-                    <img src="/static/assets/Case1.png" alt="Basic Case">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2489/2489317.png" alt="Basic Case">
                     <h3>Обычный кейс</h3>
                     <p>500 монет</p>
                 </div>
                 
                 <div class="case" data-price="1500" data-type="rare">
-                    <img src="/static/assets/Case2.png" alt="Rare Case">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2489/2489336.png" alt="Rare Case">
                     <h3>Редкий кейс</h3>
                     <p>1500 монет</p>
                 </div>
             </div>
             
-            <!-- Анимация открытия кейса -->
             <div class="spin-reveal-container hidden">
                 <div class="spin-stage">
                     <div class="spinning-case">
                         <img src="https://cdn-icons-png.flaticon.com/512/2489/2489317.png" alt="Spinning Case">
                     </div>
-                    <div class="particles"></div>
                     <div class="roulette-items" id="roulette-items"></div>
                 </div>
                 <div class="reveal-stage hidden">
@@ -53,7 +50,6 @@
             </div>
         </div>
         
-        <!-- Вкладка магазина -->
         <div class="content" id="shop-tab">
             <h2>Магазин</h2>
             <div class="shop-items">
@@ -66,7 +62,6 @@
             </div>
         </div>
         
-        <!-- Вкладка профиля -->
         <div class="content" id="profile-tab">
             <div class="profile-header">
                 <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile" class="avatar">
@@ -81,7 +76,6 @@
             </div>
         </div>
         
-        <!-- Вкладка друзей -->
         <div class="content" id="friends-tab">
             <h2>Друзья</h2>
             <div class="friends-list">
@@ -92,7 +86,6 @@
             </div>
         </div>
         
-        <!-- Нижнее меню -->
         <nav class="bottom-nav">
             <button class="nav-btn active" data-tab="cases-tab">
                 <img src="https://cdn-icons-png.flaticon.com/512/2489/2489317.png" alt="Cases">
